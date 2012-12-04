@@ -1,7 +1,2 @@
-bin
-dist
-lib
-nbproject
-resources
-src
 !src/keel/Algorithms/Rule_Learning/ATRIS/*
+*
