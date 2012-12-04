@@ -1,2 +1,0 @@
-Main-Class: keel.Algorithms.Instance_Generation.MixtGauss.MixtGaussGenerator
-
