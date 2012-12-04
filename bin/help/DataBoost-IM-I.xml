@@ -1,0 +1,114 @@
+<method>
+	<name>
+		DataBoost-IM algorithm with C4.5 Decision Tree as Base Classifier
+	</name>
+	<reference>  
+		<ref>
+			H. Guo and H. L. Viktor. Learning from imbalanced data sets with boosting and data generation: the DataBoost-IM approach. SIGKDD Expl. Newsl., vol. 6, pp. 30-39, 2004.
+		</ref>
+	</reference>
+	<generalDescription>  
+		<type>
+			Ensemble of classifiers. Boosting. Resampling
+		</type>
+		<objective>
+			To determine a set of decision trees that on the basis of answers to questions about the input attributes predicts correctly the value of the target attribute.
+		</objective>
+		<howWork>
+			It combines AdaBoost.M1 algorithm with a data generation strategy. It first identifies hard examples (seeds) and then carries out a rebalance process, always for both classes. 
+        </howWork>
+		<parameterSpec>  
+			<param>
+				prune: wether to prune or not prune the tree. It is a boolean value that determines if the algorithm applies a prune process after building the tree
+			</param>
+			<param>
+				confidence: is the confidence level. It is a float value that determines what is the minimal confidence that must has a leaf in order to can be considered in the tree
+			</param>
+			<param>
+				minItemsets: is the minimum number of item-sets per leaf. It is an integer value that determines how much data instances must contain a leaf in order to can be created
+			</param>
+			<param>
+				Number of Classifiers: is the maximum number of iterations that the boosting procedure will be executed
+			</param>
+			<param>
+				Train Method: is the method used to train the classifier in each iteration (using resampling or cost-sensitive classifier)
+			</param>
+		</parameterSpec>
+		<properties>
+			<continuous>Yes</continuous>
+			<discretized>Yes</discretized>
+			<integer>Yes</integer>
+			<nominal>Yes</nominal>
+			<valueLess>Yes</valueLess>
+			<impreciseValue>No</impreciseValue>
+		</properties>
+	</generalDescription>
+<example>
+Problem type: Imbalanced
+Method: DataBoost-IM algorithm with C4.5 Decision Tree as Base Classifier
+Dataset: abalone9-18
+Training set: abalone9-18-5-5-1tra.dat
+Test set: abalone9-18-5-5-1tst.dat
+Test Show results: TSTImb-DataBoostIM
+Parameters: default values
+
+After the execution of RunKeel.jar we can see the classification results for the test set:
+
+G-mean in Training: 1.0
+F-mean in Training: 1.0
+TPrate in Training: 1.0
+G-mean in Test: 0.4679760787753559
+F-mean in Test: 0.30769230769230765
+TPrate in Test: 0.2222222222222222
+Accuracy in training: 1.0
+Accuracy in test: 0.9387755102040817
+
+We can also see the output and target classes for each case of the test set (result0.tst) in Experiment\Results\Imb-DataBoostIM.abalone9-18:
+
+@relation  abalone9-18
+@attribute Sex{M,F,I}
+@attribute Length real[0.075,0.815]
+@attribute Diameter real[0.055,0.65]
+@attribute Height real[0.0,1.13]
+@attribute Whole_weight real[0.0020,2.8255]
+@attribute Shucked_weight real[0.0010,1.488]
+@attribute Viscera_weight real[5.0E-4,0.76]
+@attribute Shell_weight real[0.0015,1.005]
+@attribute Rings{positive,negative}
+@inputs Sex,Length,Diameter,Height,Whole_weight,Shucked_weight,Viscera_weight,Shell_weight
+@outputs Rings
+@data
+negative negative
+negative negative
+negative negative
+negative negative
+negative negative
+positive negative
+negative negative
+negative negative
+negative negative
+negative negative
+positive positive
+negative negative
+negative negative
+positive negative
+positive negative
+positive negative
+negative negative
+negative negative
+negative negative
+negative negative
+negative negative
+negative negative
+negative negative
+negative negative
+negative negative
+negative negative
+negative negative
+negative negative
+negative negative
+negative negative
+...
+</example>
+
+</method>

@@ -1,0 +1,63 @@
+<method>
+
+	<name>Cross-Validated Committees Filter</name>
+
+	<reference>  
+
+		<ref>S. Verbaeten, and A. V. Assche, “Ensemble methods for noise elimination in classification problems”, In Fourth International Workshop on Multiple Classifier Systems. Springer, 2003, pp. 317–325.</ref>
+
+	</reference>
+
+	<generalDescription>  
+
+		<type>Noisy Data Filter</type>
+
+		<objective>To remove noisy instances from the training data.</objective>
+
+		<howWork>
+The steps of the Cross-Validated Committees Filter are the following:
+
+1) Partition the training set into n subsets.
+2) The C4.5 algorithm is trained n times, each time leaving out one of the subsets
+from the training set.
+3) These n classifiers tag each example in the training set.
+4) The filter compares the real class of each example with the n labels of the classifiers,
+and decides whether or not to remove the example using a voting scheme.
+		</howWork>
+
+		<parameterSpec>
+			
+			<param>numPartitions: number of partitions of the training set.
+			</param>
+			
+			<param>filterType: consensus or majority.
+			</param>
+			
+			<param>confidence: confidence for the C4.5 algorithm.
+			</param>
+
+			<param>itemsetsPerLeaf: minimum of itemsets per leaf for the C4.5 algorithm.
+			</param>
+
+			
+		</parameterSpec>
+
+		<properties>
+
+			<continuous>Yes</continuous>
+
+			<discretized>Yes</discretized>
+
+			<integer>Yes</integer>
+
+			<nominal>Yes</nominal>
+
+			<valueLess>No</valueLess>
+
+			<impreciseValue>No</impreciseValue>
+
+		</properties>
+
+	</generalDescription>
+
+</method>

@@ -1,0 +1,117 @@
+<method>
+	<name>
+		BalanceCascade ensemble with C4.5 Decision Tree as Base Classifier
+	</name>
+	<reference>  
+		<ref>
+			X.-Y. Liu, J. Wu, and Z.-H. Zhou. Exploratory undersampling for class-imbalance learning. IEEE Transactions on Systems, Man, and Cybernetics - part B, vol. 39, no. 2, pp. 539-550, 2009. 
+		</ref>
+	</reference>
+	<generalDescription>  
+		<type>
+			Ensemble of classifiers. Bagging. Boosting. Undersampling.
+		</type>
+		<objective>
+			To determine a set of decision trees that on the basis of answers to questions about the input attributes predicts correctly the value of the target attribute.
+		</objective>
+		<howWork>
+		BalanceCascade carries out a double ensemble learning, that is, it combines both bagging and boosting (also with a preprocessing technique). In the same manner as UnderBagging, each balanced bag is constructed by randomly undersampling instances from the majority class and using all the instances from the minority class. The difference between these methods is the way in which they treat the negative instances after each iteration. This approach does not perform any operation with the instances from the original data-set after each AdaBoost iteration. Hence, all the classifiers can be trained in parallel. Note that, EasyEnsemble can be seen as an UnderBagging where the base learner is AdaBoost, if we fix the number of classifiers, EasyEnsemble will train less bags than UnderBagging, but more classifiers will be assigned to learn each single bag.
+        </howWork>
+		<parameterSpec>  
+			<param>
+				prune: wether to prune or not prune the tree. It is a boolean value that determines if the algorithm applies a prune process after building the tree
+			</param>
+			<param>
+				confidence: is the confidence level. It is a float value that determines what is the minimal confidence that must has a leaf in order to can be considered in the tree
+			</param>
+			<param>
+				minItemsets: is the minimum number of item-sets per leaf. It is an integer value that determines how much data instances must contain a leaf in order to can be created
+			</param>
+			<param>
+				Number of Classifiers: is the number of iterations that the boosting procedure will use (the total number of classifiers is the number of classifiers times the number or bags)
+			</param>
+			<param>
+				Train Method: is the method used to train the classifier in each iteration (using resampling or cost-sensitive classifier)
+			</param>
+			<param>
+				Number of Bags: is the number of bags to be used (= how many times the undersampling is carried out)
+			</param>
+		</parameterSpec>
+		<properties>
+			<continuous>Yes</continuous>
+			<discretized>Yes</discretized>
+			<integer>Yes</integer>
+			<nominal>Yes</nominal>
+			<valueLess>Yes</valueLess>
+			<impreciseValue>No</impreciseValue>
+		</properties>
+	</generalDescription>
+<example>
+Problem type: Imbalanced
+Method: EasyEnsemble ensemble with C4.5 Decision Tree as Base Classifier
+Dataset: abalone9-18
+Training set: abalone9-18-5-5-1tra.dat
+Test set: abalone9-18-5-5-1tst.dat
+Test Show results: TSTImb-EasyEnsemble
+Parameters: default values
+
+After the execution of RunKeel.jar we can see the classification results for the test set:
+
+G-mean in Training: 0.8086454699142012
+F-mean in Training: 0.2857142857142857
+TPrate in Training: 0.8787878787878788
+G-mean in Test: 0.6985146421615009
+F-mean in Test: 0.23076923076923078
+TPrate in Test: 0.6666666666666666
+Accuracy in training: 0.7517123287671232
+Accuracy in test: 0.7278911564625851
+
+We can also see the output and target classes for each case of the test set (result0.tst) in Experiment\Results\Imb-EasyEnsemble.abalone9-18:
+
+@relation  abalone9-18
+@attribute Sex{M,F,I}
+@attribute Length real[0.075,0.815]
+@attribute Diameter real[0.055,0.65]
+@attribute Height real[0.0,1.13]
+@attribute Whole_weight real[0.0020,2.8255]
+@attribute Shucked_weight real[0.0010,1.488]
+@attribute Viscera_weight real[5.0E-4,0.76]
+@attribute Shell_weight real[0.0015,1.005]
+@attribute Rings{positive,negative}
+@inputs Sex,Length,Diameter,Height,Whole_weight,Shucked_weight,Viscera_weight,Shell_weight
+@outputs Rings
+@data
+negative negative
+negative negative
+negative positive
+negative negative
+negative negative
+positive positive
+negative negative
+negative positive
+negative negative
+negative positive
+positive positive
+negative negative
+negative negative
+positive negative
+positive positive
+positive negative
+negative positive
+negative positive
+negative negative
+negative negative
+negative negative
+negative negative
+negative negative
+negative negative
+negative negative
+negative negative
+negative positive
+negative negative
+negative negative
+negative positive
+...
+</example>
+
+</method>
