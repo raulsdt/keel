@@ -1,0 +1,13 @@
+**************************************************************************************************************************************************************************
+
+	KEEL SOFTWARE TOOL - Open Source - V2012-05-07
+
+**************************************************************************************************************************************************************************
+
+KEEL Version 2012-05-07 is available now.
+
+New features (from v2012-02-16):
+
+	1. Added the Fuzzy Association Rule-based Classification method for High-Dimensional problems (FARC-HD-C) algorithm implementation in the Associative Classification section.
+	2. Updated the implementation of the Nonparametric Statistical Analysis GUI.	
+	
