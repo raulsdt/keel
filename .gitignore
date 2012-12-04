@@ -1,3 +1,2 @@
 *
-!.gitignore
-!/src/keel/Algorithms/Rule_Learning/ATRIS/*
+!src/keel/Algorithms/Rule_Learning/*
