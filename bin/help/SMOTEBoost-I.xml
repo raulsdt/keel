@@ -1,0 +1,118 @@
+<method>
+	<name>
+		SMOTEBoost algorithm with C4.5 Decision Tree as Base Classifier
+	</name>
+	<reference>
+		<ref>
+			N. V. Chawla, A. Lazarevic, L. O. Hall, and K. W. Bowyer, SMOTEBoost: Improving prediction of the minority class in boosting, in Knowledge Discovery in Databases, 2003, pp. 107-119.
+		</ref>
+	</reference>
+	<generalDescription>  
+		<type>
+			Ensemble of classifiers. Boosting. SMOTE. Resampling.
+		</type>
+		<objective>
+			To determine a set of decision trees that on the basis of answers to questions about the input attributes predicts correctly the value of the target attribute.
+		</objective>
+		<howWork>
+			SMOTEBoost introduces synthetic instances in each iteration of of AdaBoost.M2, using the SMOTE data preprocessing algorithm. The weights of the new instances are proportional to the total number of instances in the new data-set. Hence, their weights are always the same (in all iterations and for all new instances), whereas original data-set's instances weights are normalized in such a way that they form a distribution with the new instances. After training a classifier, the weights of the original data-set instances are updated, then another sampling phase is applied (again, modifying the weight distribution). The repetition of this process also brings along more diversity in the training data, which generally benefits the ensemble learning.
+        </howWork>
+		<parameterSpec>  
+			<param>
+				prune: wether to prune or not prune the tree. It is a boolean value that determines if the algorithm applies a prune process after building the tree
+			</param>
+			<param>
+				confidence: is the confidence level. It is a float value that determines what is the minimal confidence that must has a leaf in order to can be considered in the tree
+			</param>
+			<param>
+				minItemsets: is the minimum number of item-sets per leaf. It is an integer value that determines how much data instances must contain a leaf in order to can be created
+			</param>
+			<param>
+				Number of Classifiers: is the maximum number of iterations that the boosting procedure will be executed
+			</param>
+			<param>
+				Train Method: is the method used to train the classifier in each iteration (using resampling or cost-sensitive classifier)
+			</param>
+			<param>
+				Quantity of balancing: percentage of the majority class instances in the new data-set (if it is less or equal to 100%, the classes are rebalanced at 100%)
+			</param>
+		</parameterSpec>
+		<properties>
+			<continuous>Yes</continuous>
+			<discretized>Yes</discretized>
+			<integer>Yes</integer>
+			<nominal>Yes</nominal>
+			<valueLess>Yes</valueLess>
+			<impreciseValue>No</impreciseValue>
+		</properties>
+	</generalDescription>
+<example>
+Problem type: Imbalanced
+Method: SMOTEBoost algorithm with C4.5 Decision Tree as Base Classifier
+Dataset: abalone9-18
+Training set: abalone9-18-5-5-1tra.dat
+Test set: abalone9-18-5-5-1tst.dat
+Test Show results: TSTImb-SMOTEBoost
+Parameters: default values
+
+After the execution of RunKeel.jar we can see the classification results for the test set:
+
+G-mean in Training: 1.0
+F-mean in Training: 1.0
+TPrate in Training: 1.0
+G-mean in Test: 0.7036825151484182
+F-mean in Test: 0.3448275862068966
+TPrate in Test: 0.5555555555555556
+Accuracy in training: 1.0
+Accuracy in test: 0.8707482993197279
+
+We can also see the output and target classes for each case of the test set (result0.tst) in Experiment\Results\Imb-SMOTEBoost.abalone9-18:
+
+@relation  abalone9-18
+@attribute Sex{M,F,I}
+@attribute Length real[0.075,0.815]
+@attribute Diameter real[0.055,0.65]
+@attribute Height real[0.0,1.13]
+@attribute Whole_weight real[0.0020,2.8255]
+@attribute Shucked_weight real[0.0010,1.488]
+@attribute Viscera_weight real[5.0E-4,0.76]
+@attribute Shell_weight real[0.0015,1.005]
+@attribute Rings{positive,negative}
+@inputs Sex,Length,Diameter,Height,Whole_weight,Shucked_weight,Viscera_weight,Shell_weight
+@outputs Rings
+@data
+negative negative
+negative negative
+negative positive
+negative negative
+negative negative
+positive positive
+negative negative
+negative positive
+negative positive
+negative negative
+positive positive
+negative negative
+negative negative
+positive negative
+positive positive
+positive negative
+negative negative
+negative negative
+negative negative
+negative negative
+negative negative
+negative negative
+negative negative
+negative negative
+negative negative
+negative negative
+negative negative
+negative negative
+negative negative
+negative negative
+negative negative
+...
+</example>
+
+</method>

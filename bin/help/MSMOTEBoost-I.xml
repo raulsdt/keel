@@ -1,0 +1,118 @@
+<method>
+	<name>
+		MSMOTEBoost algorithm with C4.5 Decision Tree as Base Classifier
+	</name>
+	<reference>
+		<ref>
+			S. Hu, Y. Liang, L. Ma, and Y. He. MSMOTE: Improving classification performance when training data is imbalanced, in 2nd International Workshop on Computer Science and Engineering, vol. 2, 2009, pp. 13-17.
+		</ref>
+	</reference>
+	<generalDescription>  
+		<type>
+			Ensemble of classifiers. Boosting. MSMOTE. Resampling.
+		</type>
+		<objective>
+			To determine a set of decision trees that on the basis of answers to questions about the input attributes predicts correctly the value of the target attribute.
+		</objective>
+		<howWork>
+			MSMOTEBoost introduces synthetic instances in each iteration of of AdaBoost.M2, using the MSMOTE data preprocessing algorithm. The weights of the new instances are proportional to the total number of instances in the new data-set. Hence, their weights are always the same (in all iterations and for all new instances), whereas original data-set's instances weights are normalized in such a way that they form a distribution with the new instances. After training a classifier, the weights of the original data-set instances are updated, then another sampling phase is applied (again, modifying the weight distribution). The repetition of this process also brings along more diversity in the training data, which generally benefits the ensemble learning.
+        </howWork>
+		<parameterSpec>  
+			<param>
+				prune: wether to prune or not prune the tree. It is a boolean value that determines if the algorithm applies a prune process after building the tree
+			</param>
+			<param>
+				confidence: is the confidence level. It is a float value that determines what is the minimal confidence that must has a leaf in order to can be considered in the tree
+			</param>
+			<param>
+				minItemsets: is the minimum number of item-sets per leaf. It is an integer value that determines how much data instances must contain a leaf in order to can be created
+			</param>
+			<param>
+				Number of Classifiers: is the maximum number of iterations that the boosting procedure will be executed
+			</param>
+			<param>
+				Train Method: is the method used to train the classifier in each iteration (using resampling or cost-sensitive classifier)
+			</param>
+			<param>
+				Quantity of balancing: percentage of the majority class instances in the new data-set (if it is less or equal to 100%, the classes are rebalanced at 100%)
+			</param>
+		</parameterSpec>
+		<properties>
+			<continuous>Yes</continuous>
+			<discretized>Yes</discretized>
+			<integer>Yes</integer>
+			<nominal>Yes</nominal>
+			<valueLess>Yes</valueLess>
+			<impreciseValue>No</impreciseValue>
+		</properties>
+	</generalDescription>
+<example>
+Problem type: Imbalanced
+Method: MSMOTEBoost algorithm with C4.5 Decision Tree as Base Classifier
+Dataset: abalone9-18
+Training set: abalone9-18-5-5-1tra.dat
+Test set: abalone9-18-5-5-1tst.dat
+Test Show results: TSTImb-MSMOTEBoost
+Parameters: default values
+
+After the execution of RunKeel.jar we can see the classification results for the test set:
+
+G-mean in Training: 0.8680155676503334
+F-mean in Training: 0.819672131147541
+TPrate in Training: 0.7575757575757576
+G-mean in Test: 0.6544779483398382
+F-mean in Test: 0.4444444444444444
+TPrate in Test: 0.4444444444444444
+Accuracy in training: 0.9811643835616438
+Accuracy in test: 0.9319727891156463
+
+We can also see the output and target classes for each case of the test set (result0.tst) in Experiment\Results\Imb-MSMOTEBoost.abalone9-18:
+
+@relation  abalone9-18
+@attribute Sex{M,F,I}
+@attribute Length real[0.075,0.815]
+@attribute Diameter real[0.055,0.65]
+@attribute Height real[0.0,1.13]
+@attribute Whole_weight real[0.0020,2.8255]
+@attribute Shucked_weight real[0.0010,1.488]
+@attribute Viscera_weight real[5.0E-4,0.76]
+@attribute Shell_weight real[0.0015,1.005]
+@attribute Rings{positive,negative}
+@inputs Sex,Length,Diameter,Height,Whole_weight,Shucked_weight,Viscera_weight,Shell_weight
+@outputs Rings
+@data
+negative negative
+negative negative
+negative positive
+negative negative
+negative negative
+positive negative
+negative negative
+negative negative
+negative negative
+negative negative
+positive positive
+negative negative
+negative negative
+positive negative
+positive negative
+positive negative
+negative negative
+negative negative
+negative negative
+negative negative
+negative negative
+negative negative
+negative negative
+negative negative
+negative negative
+negative negative
+negative negative
+negative negative
+negative negative
+negative positive
+negative negative
+...
+</example>
+
+</method>

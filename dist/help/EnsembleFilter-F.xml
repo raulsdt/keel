@@ -1,0 +1,71 @@
+<method>
+
+	<name>Ensemble Filter</name>
+
+	<reference>
+		<ref>C. E. Brodley and M. A. Friedl, “Identifying Mislabeled Training Data”, Journal of Artificial Intelligence Research, vol. 11, pp. 131–167, 1999.</ref>
+	</reference>
+
+	<generalDescription>  
+
+		<type>Noisy Data Filter</type>
+
+		<objective>To remove noisy instances from the training data.</objective>
+
+		<howWork>
+The process carried out by the Ensemble Filter is described below:
+
+1) Split the training data into n equal sized parts.
+2) For each of these n parts, m filter algorithms are trained on the other n − 1 parts.
+3) The m resulting classifiers are then used to tag each instance in the excluded part as
+either correct or mislabeled, by comparing the training label with that assigned by the
+classifier.
+4) Decide which instances must be removed from the training set by means a vote-based scheme.
+		</howWork>
+
+		<parameterSpec>
+			
+			<param>numPartitions: number of partitions of the training set.
+			</param>
+			
+			<param>filterType: consensus or majority.
+			</param>
+			
+			<param>numNeighbors: for the K-NN algorithm, the number of neighbors.
+			</param>
+			
+			<param>distanceType: for the K-NN algorithm, the distance type.
+			</param>
+			
+			<param>confidence: confidence for the C4.5 algorithm.
+			</param>
+
+			<param>itemsetsPerLeaf: minimum of itemsets per leaf for the C4.5 algorithm.
+			</param>
+
+			
+		</parameterSpec>
+
+		<properties>
+
+			<continuous>Yes</continuous>
+
+			<discretized>Yes</discretized>
+
+			<integer>Yes</integer>
+
+			<nominal>Yes</nominal>
+
+			<valueLess>No</valueLess>
+
+			<impreciseValue>No</impreciseValue>
+
+		</properties>
+
+	</generalDescription>
+	
+	<example>
+		
+	</example>
+
+</method>

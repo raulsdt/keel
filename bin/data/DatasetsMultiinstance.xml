@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset_list>
+  <dataset>
+    <nameAbr>musk1</nameAbr>
+    <nameComplete>musk1</nameComplete>
+    <problemType>Classification</problemType>
+    <partitions>
+      <partition>10cfv</partition>
+    </partitions>
+    <continuous>Yes</continuous>
+    <integer>No</integer>
+    <nominal>No</nominal>
+    <imprecise>No</imprecise>
+    <missing>No</missing>
+	<multiinstance>Yes</multiinstance>
+    <nAttributes>546</nAttributes>
+    <nInstances>476</nInstances>
+    <nClasses>2</nClasses>
+    <field>Output</field>
+  </dataset>
+</dataset_list>
+
