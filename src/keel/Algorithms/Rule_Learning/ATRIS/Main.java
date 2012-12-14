@@ -56,7 +56,7 @@ public class Main {
         
         Algorithm method = new Algorithm(parameters);
         
-        method.execute();
+        //method.execute();
     }
 
     /**

@@ -77,9 +77,6 @@ public class Algorithm {
             System.out.println("\nReading the training set: " +
                                parameters.getTrainingInputFile());
             train.readClassificationSet(parameters.getTrainingInputFile(), true);
-            System.out.println("\nReading the validation set: " +
-                               parameters.getValidationInputFile());
-            val.readClassificationSet(parameters.getValidationInputFile(), false);
             System.out.println("\nReading the test set: " +
                                parameters.getTestInputFile());
             test.readClassificationSet(parameters.getTestInputFile(), false);
