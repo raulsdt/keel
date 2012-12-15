@@ -1,32 +1,8 @@
-/***********************************************************************
-
-	This file is part of KEEL-software, the Data Mining tool for regression, 
-	classification, clustering, pattern mining and so on.
-
-	Copyright (C) 2004-2010
-	
-	F. Herrera (herrera@decsai.ugr.es)
-    L. S�nchez (luciano@uniovi.es)
-    J. Alcal�-Fdez (jalcala@decsai.ugr.es)
-    S. Garc�a (sglopez@ujaen.es)
-    A. Fern�ndez (alberto.fernandez@ujaen.es)
-    J. Luengo (julianlm@decsai.ugr.es)
-
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
-
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see http://www.gnu.org/licenses/
-  
-**********************************************************************/
-
+/**
+ * @author Raúl Salazar de Torres
+ * @author José Manuel Serrano Mármol @date 15/12/2012
+ * @version 1.0
+ */
 package keel.Algorithms.Rule_Learning.ATRIS;
 
 /**
@@ -40,7 +16,7 @@ package keel.Algorithms.Rule_Learning.ATRIS;
  * @author Alberto Fernandez
  * @version 1.0
  */
-
+import com.lowagie.text.pdf.ArabicLigaturizer;
 import java.io.IOException;
 import org.core.*;
 import java.util.*;
@@ -51,10 +27,11 @@ public class Algorithm {
 
     myDataset train, val, test;
     String outputTr, outputTst, outputReglas;
+    int sizeVectorRule = 0;
+    ArrayList<Integer> valoresAtributo = new ArrayList<Integer>();
+    int[] arrayReglas = new int[train.getnData()]; //Reglas disponibles
     //int nClasses;
-
     //We may declare here the algorithm's parameters
-
     private boolean somethingWrong = false; //to check if everything is correct.
 
     /**
@@ -64,9 +41,11 @@ public class Algorithm {
     }
 
     /**
-     * It reads the data from the input files (training, validation and test) and parse all the parameters
-     * from the parameters array.
-     * @param parameters parseParameters It contains the input files, output files and parameters
+     * It reads the data from the input files (training, validation and test)
+     * and parse all the parameters from the parameters array.
+     *
+     * @param parameters parseParameters It contains the input files, output
+     * files and parameters
      */
     public Algorithm(parseParameters parameters) {
 
@@ -74,16 +53,16 @@ public class Algorithm {
         val = new myDataset();
         test = new myDataset();
         try {
-            System.out.println("\nReading the training set: " +
-                               parameters.getTrainingInputFile());
+            System.out.println("\nReading the training set: "
+                    + parameters.getTrainingInputFile());
             train.readClassificationSet(parameters.getTrainingInputFile(), true);
-            System.out.println("\nReading the test set: " +
-                               parameters.getTestInputFile());
+            System.out.println("\nReading the test set: "
+                    + parameters.getTestInputFile());
             test.readClassificationSet(parameters.getTestInputFile(), false);
         } catch (IOException e) {
             System.err.println(
-                    "There was a problem while reading the input data-sets: " +
-                    e);
+                    "There was a problem while reading the input data-sets: "
+                    + e);
             somethingWrong = true;
         }
 
@@ -96,220 +75,275 @@ public class Algorithm {
         outputReglas = parameters.getReglasOutputFile();
     }
 
-    private LinkedList<LinkedList<Integer>> calcula_conjuntos_elementales(LinkedList<Integer> atributos){        
-            double[] fila;
-            double[] filaux;
-            LinkedList<LinkedList<Integer>> particiones = new LinkedList <LinkedList<Integer>>();
-            LinkedList<Integer> particion = new LinkedList <Integer> ();
-            
-            for(int i=0;i<train.getnData();i++){ //para cada fila
-                fila = train.getExample(i);                
-                for(int k=0;k<train.getnData();k++){ //vemos con qué otras filas coincide
-                    filaux = train.getExample(k);
-                    boolean ok = true;
-                    
-                    for (int j=0;j<atributos.size();j++){                        
-                        if (fila[atributos.get(j)]!=filaux[atributos.get(j)]){
-                            ok=false;                            
-                        }
-                    }
-                    if (ok) particion.add(k);
-                }
-                if(!particiones.contains(particion)) particiones.add((LinkedList<Integer>)particion.clone()); //Guardamos la partición si no está ya                
-                particion.clear();                
-            }
-            
-            //Mostramos las particiones
-            /*for (int i=0; i<particiones.size(); i++){
-                for (int j=0; j<(particiones.get(i)).size(); j++){
-                     System.out.println("--------"+(particiones.get(i).get(j)));  
-                }
-                System.out.println("+++++++++++++++++++++++++++");   
-            }*/            
-            return particiones;
-    }
-    
-    private LinkedList<LinkedList<Integer>> calcula_conjunto_elemental_salida(){
-            int fila, filaux;
-            LinkedList<LinkedList<Integer>> particiones = new LinkedList <LinkedList<Integer>>();
-            LinkedList<Integer> particion = new LinkedList <Integer>();
-        
-            for(int i=0;i<train.getnData();i++){ //para cada fila
-                fila = train.getOutputAsInteger(i);
-                for(int k=0; k<train.getnData(); k++){ //vemos con qué otras filas coincide
-                    filaux = train.getOutputAsInteger(k);
-                    if (fila==filaux) particion.add(k);
-                }
-                
-                if(!particiones.contains(particion)) particiones.add((LinkedList<Integer>)particion.clone()); //Guardamos la partición si no está ya                
-                particion.clear();                
-            }        
-            //Mostramos las particiones
-            /*for (int i=0; i<particiones.size(); i++){
-                for (int j=0; j<(particiones.get(i)).size(); j++){
-                     System.out.println("--------"+(particiones.get(i).get(j)));  
-                }
-                System.out.println("+++++++++++++++++++++++++++");   
-            }            */
-            return particiones;
-    }
-    
-    private Boolean calcula_dependencia(LinkedList<LinkedList<Integer>> A, LinkedList<LinkedList<Integer>> d){
-        
-        boolean dependiente=true;
-        
-        if (A.size()== train.getnData() ){//si el conjunto esta definido con valores independiente
-            return dependiente;
-        }else{  
-            int i=0;
-            while((i<A.size())&&(dependiente)){
-                int lista=-1;
-                
-                if(A.get(i).size()>1){//si el subconjunto es de uno no hace falta comparar
-                    
-                    int j=0;
-                    while((j<A.get(i).size())&&(dependiente)){
-                    
-                            int aux=A.get(i).get(j);
-                            //se busca cada valor en el conjunto d, y se almacena el subconjunto 
-                            //al que pertenece, para comproba que todos los valores son del mismo
-                            int m=0; boolean encontrado=false;
-                            while((m<d.size()) && (!encontrado)){
-                                int n=0;
-                                while((n<d.get(m).size()) && (!encontrado)){
-                                  if (aux==d.get(m).get(n)){
-                                      if (j==0){
-                                          lista=m;
-                                      }else if (m!=lista){
-                                         dependiente=false; 
-                                      }//fin if-else
-                                      encontrado=true; //para salir de while antes
-                                  }//fin if
-                                  n++;
-                                }//fin while
-                                m++;
-                            }//fin while
-                            j++;
-                       }//fin while
-                }//fin if
-                i++;
-            }//fin while
-        }//fin if-else
-        
-        return dependiente;
-    }
-    
     /**
      * 
-     * @param A Lista con todos los inputs
-     * @param d Partición conjuntos elementales {d}*
-     * @return Lista con los inputs que representan la cobertura global
+     * @param rule
+     * @return 
      */
-    private LinkedList<Integer> calcula_cobertura_global(LinkedList<Integer> A, LinkedList<LinkedList<Integer>> d){
-        
-        //################### Inicializamos P con todos los inputs##########
-        LinkedList<Integer> P = A;                        
-        //################### Inicializamos R como vacío####################
-        LinkedList<Integer> R = new LinkedList<Integer>();
-            
-        if (calcula_dependencia(calcula_conjuntos_elementales(A),d)){ //Se cumplirá siempre y cuando no haya inconsistencias
-            LinkedList<LinkedList<Integer>> particion = new LinkedList<LinkedList<Integer>>();
-            for(int i=0;i<train.getnInputs();i++){                    
-                P.remove(new Integer(i));//quitamos el atributo i
-                particion = calcula_conjuntos_elementales(P); //calculamos la particion sin ese atributo
-                if (calcula_dependencia(particion,d)){ //¿Sigue siendo dependiente de {d}*?
-                    //P = Q; ya está hecho porque he hecho el remove antes
-                }else{
-                    P.add(i); //Volvemos al estado anterior de P añadiendo lo que habíamos borrado con anterioridad
-                    Collections.sort(P);
+    private int containVars(int[] rule) {
+        int[] vectorNumerico = new int[train.getnInputs()];
+        boolean entra = true;
+        int suma_Positivos = 0;
+
+        for (int i = 0; i < arrayReglas.length; i++) {
+            entra = true;
+            if (arrayReglas[i] == 1) {
+                for (int j = 0; j < train.getnInputs(); j++) {
+                    if (rule[(int) train.getX()[i][j]] != 1) {
+                        entra = false;
+                    }
+                    break;
+                }
+                if (entra) {
+                    suma_Positivos++;
                 }
             }
-            R = P;
-        }else{ 
-            System.out.println("El conjunto A de todos los atributos y la partición {d}* no son dependientes.");            
         }
-        return R;
+        return suma_Positivos;
+    }
+
+    private int numRuleActivate(){
+        int suma=0;
+        for(int i=0;i< arrayReglas.length;i++){
+            if(arrayReglas[i]==1)
+                suma++;
+        }
+        return suma;
     }
     
-    
+    private double mestimate(int[] rule) {
+        int P = containVars(rule);
+        int N = numRuleActivate() - P;
+        
+        // TODO El estimador hay que terminarlo.
+        
+        return 2.0; 
+    }
+
+    /**
+     * Obtain de rules that there is activated nowdays
+     *
+     * @param rules
+     * @param arrayReglas
+     * @return
+     */
+    private ArrayList<Integer> rulesActivate(LinkedList<Integer> rules, int[] arrayReglas) {
+        ArrayList<Integer> lista = new ArrayList<Integer>();
+        for (int i = 0; i < rules.size(); i++) {
+            if (arrayReglas[rules.get(i)] == 1) {
+                lista.add(rules.get(i));
+            }
+        }
+        return lista;
+    }
+
+    /**
+     * Method to calculate 2-opt
+     *
+     * @param vector
+     * @param a
+     * @param b
+     * @return
+     */
+    private int[] _2opt(int[] vector, int a, int b) {
+        int[] vectorSalida = new int[sizeVectorRule];
+        vectorSalida = vector;
+
+        if (vectorSalida[a] == 1) {
+            vectorSalida[a] = 0;
+        } else {
+            vectorSalida[a] = 1;
+        }
+
+        if (vectorSalida[b] == 1) {
+            vectorSalida[b] = 0;
+        } else {
+            vectorSalida[b] = 1;
+        }
+
+        return vectorSalida;
+    }
+
+    public int[] obtainBestRule(int example) {
+
+        double[][] arrayValores = train.getX();
+        int[] valores = new int[train.getOutputAsInteger().length];
+        int seguimientoVecino1 = 0;
+        int seguimientoVecino2 = 0;
+        double bestError = 0;
+
+        //Preparate for transladation to Binary number
+        for (int i = 0; i < train.getnInputs(); i++) {
+            for (int j = 0; j < train.getOutputAsInteger().length; j++) {
+                valores[j] = ((int) arrayValores[j][i]);
+            }
+            Arrays.sort(valores);
+
+            System.out.println("Valores maximos: " + valores[(valores.length - 1)]);
+            sizeVectorRule += valores[(valores.length - 1)] + 1;
+            valoresAtributo.add(valores[(valores.length - 1)] + 1);
+        }
+
+        int[] arrayOut = train.getOutputAsInteger();
+        Arrays.sort(arrayOut);
+        //sizeVectorRule +=arrayOut[arrayOut.length-1]+1; //Le sumamos la parte de la clase
+
+        //Define the vector of the  - Inicializamos todo a cero
+        int[] binaryRule = new int[sizeVectorRule];
+
+        for (int j = 0; j < sizeVectorRule; j++) {
+            binaryRule[j] = 0;
+        }
+
+
+        //Conversion the Rule - Colocamos valores de uno donde sea necesario.
+        int suma = 0;
+        binaryRule[(int) arrayValores[example][0]] = 1;
+        for (int j = 1; j < train.getnInputs(); j++) {
+            suma += valoresAtributo.get(j - 1);
+            binaryRule[suma + (int) arrayValores[example][j]] = 1;
+        }
+
+        //Calculate the 2-opt
+        while (seguimientoVecino2 == sizeVectorRule) {
+            int[] ruleVecina = new int[sizeVectorRule];
+            ruleVecina = _2opt(binaryRule, seguimientoVecino1, seguimientoVecino2);
+            seguimientoVecino2++;
+            if (seguimientoVecino2 == sizeVectorRule) {
+                seguimientoVecino1++;
+                seguimientoVecino2 = 0;
+            }
+
+            bestError = mestimate(ruleVecina);
+        }
+
+// Comentario para mostrar datos por pantalla
+//        System.out.println("Ejemplo: " + example);
+//        
+//            System.out.println("Regla: ");       
+//        for(int i =0;i < sizeVectorRule;i++){
+// 
+//            System.out.print(binaryRule[i] + ", ");
+//        }
+
+        int[] hor = new int[23];
+
+        return hor;
+    }
+
     /**
      * It launches the algorithm
      */
     public void execute() {
+        int nowfilm = 0;
+        LinkedList<LinkedList<Integer>> arrayofClass = new LinkedList<LinkedList<Integer>>();
+        ArrayList<Integer> rulesActivated = new ArrayList<Integer>();
+        Random rnd = new Random(234);
+
         if (somethingWrong) { //We do not execute the program
             System.err.println("An error was found, either the data-set have numerical values or missing values.");
             System.err.println("Aborting the program");
             //We should not use the statement: System.exit(-1);
         } else {
-            
+            //Comprobaciones a realizar 
+            if (train.hasNumericalAttributes()) {
+                System.out.println("Se trata de atributos numericos");
+            } else if (train.hasRealAttributes()) {
+                System.out.println("Se trata de atributos reales");
+            } else {
+                System.out.println("Se trata de otros tipos de atributo");
+            }
+
             //##################Generamos un vector con todos los inputs########
-            LinkedList<Integer> all_inputs = new LinkedList <Integer>(); 
-            for (int i=0;i<train.getnInputs();i++){
-                all_inputs.add(i);
+//            LinkedList<Integer> all_inputs = new LinkedList <Integer>(); 
+//            for (int i=0;i<train.getnInputs();i++){
+//                all_inputs.add(i);
+//            }
+
+            //Determination vector of different Rules
+            System.out.println("La clase seleccionada es: " + selectClassInitial());
+
+
+
+            for (int i = 0; i < train.getnData(); i++) {
+                arrayReglas[i] = 1;
             }
-            
-            //###################Calcular partición {d}*########################
-            LinkedList<LinkedList<Integer>> d = calcula_conjunto_elemental_salida();
-            
-            //###################Calculamos la cobertura global#################
-            LinkedList<Integer> cobertura_global = calcula_cobertura_global(all_inputs, d);
-            
-            //###################Mostramos la cobertura global##################
-            Attribute cb[] = Attributes.getInputAttributes(); 
-            String output = new String("");
-            
-            output += "COBERTURA GLOBAL\n\n";
-            output += "{";
-            for (int j=0;j<cobertura_global.size();j++){ 
-                output += cb[cobertura_global.get(j)].getName(); 
-                if (j!=cobertura_global.size()-1) output += ",";
+
+            //Organized each out with her class
+            for (int i = 0; i < train.getnClasses(); i++) {
+                arrayofClass.add(new LinkedList<Integer>());
             }
-            output += "} \n\n";
-            
-            //###################Inducimos la base de reglas####################
-            BaseReglas br = new BaseReglas(cobertura_global,train);
-            br.ficheroReglas(outputReglas,output);
-            
-            //###################Comprobamos con el fochero de test#############
-            LinkedList<String> resultado_val = br.compruebaReglas(val);
 
+            for (int i = 0; i < train.getOutputAsInteger().length; i++) {
+                arrayofClass.get(train.getOutputAsInteger(i)).add(i);
+            }
 
+            for (int i = 0; i < arrayofClass.get(0).size(); i++) {
+                System.out.println("Valor: " + arrayofClass.get(0).get(i));
+            }
 
-            //###################Comprobamos con el fochero de test#############
-            LinkedList<String> resultado_test = br.compruebaReglas(test);
+            //Obtain the number of aleatory rule 
+            nowfilm = selectClassInitial();
+            rulesActivated = rulesActivate(arrayofClass.get(nowfilm), arrayReglas);
 
-          
-            //Finally we should fill the training and test output files
-            doOutput(this.val, this.outputTr, resultado_val);
-            doOutput(this.test, this.outputTst, resultado_test);
+            //Obtain de best rule for that example
 
-            System.out.println("Algorithm Finished");
+            obtainBestRule(rulesActivated.get(rnd.nextInt(rulesActivated.size())));
+
+//
+
         }
+    }
+
+    private int selectClassInitial() {
+
+        int[] array = new int[train.getnClasses()];
+        int countLess = 0, numberLess = 9999999;
+
+        //Inicialize the whole of the class
+        for (int i = 0; i < train.getnClasses(); i++) {
+            array[i] = 0;
+        }
+
+        for (int i = 0; i < train.getOutputAsInteger().length; i++) {
+            array[train.getOutputAsInteger(i)]++;
+        }
+
+        for (int i = 0; i < array.length; i++) {
+
+            if (array[i] < numberLess) {
+                countLess = i;
+                numberLess = array[i];
+            }
+
+        }
+
+        return countLess; //Return the number of class with less number of examples.
     }
 
     /**
      * It generates the output file from a given dataset and stores it in a file
+     *
      * @param dataset myDataset input dataset
      * @param filename String the name of the file
      */
     private void doOutput(myDataset dataset, String filename, LinkedList<String> resultado) {
         String output = new String("");
         output = dataset.copyHeader(); //we insert the header in the output file
-        Double noacertados=0.0;
-        Double noclasificados=0.0;
+        Double noacertados = 0.0;
+        Double noclasificados = 0.0;
         //We write the output for each example
         for (int i = 0; i < dataset.getnData(); i++) {
             //for classification:
-            output += dataset.getOutputAsString(i) + " " +
-                    resultado.get(i) + "\n";
-            
-            if (resultado.get(i).compareTo("No clasificado") == 0){
+            output += dataset.getOutputAsString(i) + " "
+                    + resultado.get(i) + "\n";
+
+            if (resultado.get(i).compareTo("No clasificado") == 0) {
                 noclasificados++;
-            }else if(dataset.getOutputAsString(i).compareTo(resultado.get(i)) != 0){
+            } else if (dataset.getOutputAsString(i).compareTo(resultado.get(i)) != 0) {
                 noacertados++;
-            }     
+            }
         }
         Fichero.escribeFichero(filename, output);
     }
 }
-
