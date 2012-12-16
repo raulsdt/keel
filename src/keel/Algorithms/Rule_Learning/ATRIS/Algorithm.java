@@ -75,6 +75,30 @@ public class Algorithm {
         outputReglas = parameters.getReglasOutputFile();
     }
 
+    private int containCoverVars(int[] rule, int numberRule) {
+        int[] vectorNumerico = new int[train.getnInputs()];
+        boolean entra = true;
+        int suma_Positivos = 0;
+
+        for (int i = 0; i < arrayReglas.length; i++) {
+            entra = true;
+            if (arrayReglas[i] == 1) {
+                for (int j = 0; j < train.getnInputs(); j++) {
+                    if (rule[(int) train.getX()[i][j]] != 1) {
+                        entra = false;
+                    }
+                    break;
+                }
+                if (entra) {
+                    if(train.getOutputAsInteger(i) == train.getOutputAsInteger(numberRule)){
+                        suma_Positivos++;
+                    }
+                }
+            }
+        }
+        return suma_Positivos;
+    }
+    
     /**
      * 
      * @param rule
@@ -111,13 +135,17 @@ public class Algorithm {
         return suma;
     }
     
-    private double mestimate(int[] rule) {
+    private double mestimate(int[] rule, int numberRule) {
         int P = containVars(rule);
         int N = numRuleActivate() - P;
+        int m = 2;
+        int p = containCoverVars(rule, numberRule);
+        int n = numRuleActivate() - p;
         
-        // TODO El estimador hay que terminarlo.
+        return (p+m *(P/(P+N)))/(p+n+m);
         
-        return 2.0; 
+        
+        // TODO: ATRIS - Revisar el estimador.
     }
 
     /**
@@ -168,9 +196,9 @@ public class Algorithm {
 
         double[][] arrayValores = train.getX();
         int[] valores = new int[train.getOutputAsInteger().length];
-        int seguimientoVecino1 = 0;
-        int seguimientoVecino2 = 0;
-        double bestError = 0;
+        int seguimientoVecino1 = 0, mejorVecino1;
+        int seguimientoVecino2 = 0,mejorVecino2;
+        double bestError = 0,resultado=9999;
 
         //Preparate for transladation to Binary number
         for (int i = 0; i < train.getnInputs(); i++) {
@@ -214,7 +242,12 @@ public class Algorithm {
                 seguimientoVecino2 = 0;
             }
 
-            bestError = mestimate(ruleVecina);
+            resultado =  mestimate(ruleVecina,example);
+            if(bestError < resultado){
+                bestError = resultado;
+                mejorVecino1 = seguimientoVecino1;
+                mejorVecino2 = seguimientoVecino2;
+            }
         }
 
 // Comentario para mostrar datos por pantalla
@@ -254,11 +287,6 @@ public class Algorithm {
                 System.out.println("Se trata de otros tipos de atributo");
             }
 
-            //##################Generamos un vector con todos los inputs########
-//            LinkedList<Integer> all_inputs = new LinkedList <Integer>(); 
-//            for (int i=0;i<train.getnInputs();i++){
-//                all_inputs.add(i);
-//            }
 
             //Determination vector of different Rules
             System.out.println("La clase seleccionada es: " + selectClassInitial());
@@ -289,8 +317,8 @@ public class Algorithm {
             //Obtain de best rule for that example
 
             obtainBestRule(rulesActivated.get(rnd.nextInt(rulesActivated.size())));
-
-//
+            
+            //TODO: ATRIS - Eliminar aquellos ejemplos cubiertos por la mejor regla obtenida anteriormente.
 
         }
     }
