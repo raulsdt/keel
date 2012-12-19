@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="keel" default="jar" basedir="../">
+    
+    <!-- TODO: edit the following target according to your needs -->
+    <!-- (more info: http://www.netbeans.org/kb/articles/freeform-config.html#compilesingle) -->
+    <target name="compile-selected-files-in-src">
+        <fail unless="files">Must set property 'files'</fail>
+        <mkdir dir="bin"/>
+        <javac destdir="bin" includes="keel/Algorithms/Rule_Learning/ATRIS/**/*.class
+			 org/core/**/*.class
+			 keel/Dataset/**/*.class" source="1.5" srcdir="src">
+            <classpath path="lib/Interfaz/appframework-1.0.3.jar;lib/Interfaz/com.lowagie.text.jar;lib/Interfaz/com.Ostermiller.util.jar;lib/Interfaz/commons-logging-1.1.jar;lib/Interfaz/iText.jar;lib/Interfaz/javolution.xml.jar;lib/Interfaz/jcommon-1.0.12.jar;lib/Interfaz/jdom.jar;lib/Interfaz/jfreechart-1.0.9.jar;lib/Interfaz/junit-4.5.jar;lib/Interfaz/jxl.jar;lib/Interfaz/libs-nnep.jar;lib/Interfaz/net.sf.jclec.jar;lib/Interfaz/org-netbeans-modules-java-j2seproject-copylibstask.jar;lib/Interfaz/org.apache.commons.configuration.jar;lib/Interfaz/org.exolab.castor.jar;lib/Interfaz/org.jdom.jar;lib/Interfaz/org.jfree.jar;lib/Interfaz/org.w3c.tidy.jar;lib/Interfaz/swing-layout-1.0.3.jar;lib/Interfaz/swing-worker-1.1.jar;lib/Interfaz/Tidy.jar;lib/Interfaz/xerces.jar"/>
+        </javac>
+    </target>
+</project>

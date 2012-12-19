@@ -2917,32 +2917,6 @@
 	</output>
   </method>
   <method>
-    <name>ATRIS</name>
-    <family>Crisp Rule Learning</family>
-    <jar_file>ATRIS.jar</jar_file>
-    <problem_type>classification</problem_type>
-    <input>
-      <continuous>No</continuous>
-      <integer>No</integer>
-      <nominal>Yes</nominal>
-      <missing>No</missing>
-      <imprecise>No</imprecise>
-      <multiclass>Yes</multiclass>
-      <multioutput>No</multioutput>
-    <multiinstance>No</multiinstance> 
-	</input>
-    <output>
-      <continuous>No</continuous>
-      <integer>No</integer>
-      <nominal>Yes</nominal>
-      <missing>No</missing>
-      <imprecise>No</imprecise>
-      <multiclass>Yes</multiclass>
-      <multioutput>No</multioutput>
-    <multiinstance>No</multiinstance> 
-	</output>
-  </method>
-  <method>
     <name>LEM1-C</name>
     <family>Crisp Rule Learning</family>
     <jar_file>LEM1.jar</jar_file>
