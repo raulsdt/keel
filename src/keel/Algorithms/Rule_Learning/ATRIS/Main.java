@@ -28,6 +28,11 @@
 **********************************************************************/
 
 package keel.Algorithms.Rule_Learning.ATRIS;
+
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * <p>Title: Main Class of the Program</p>
  *
@@ -50,7 +55,7 @@ public class Main {
      * It launches the algorithm
      * @param confFile String it is the filename of the configuration file.
      */
-    private void execute(String confFile) {
+    private void execute(String confFile) throws IOException {
         parameters = new parseParameters();
         parameters.parseConfigurationFile(confFile);
         
@@ -74,7 +79,11 @@ public class Main {
     public static void main(String args[]) {
         Main program = new Main();
         System.out.println("Executing Algorithm.");
-        program.execute(args[0]);
+        try {
+            program.execute(args[0]);
+        } catch (IOException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }
 

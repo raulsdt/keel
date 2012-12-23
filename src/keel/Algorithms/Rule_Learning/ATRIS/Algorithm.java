@@ -16,12 +16,9 @@ package keel.Algorithms.Rule_Learning.ATRIS;
  * @author Alberto Fernandez
  * @version 1.0
  */
-import com.lowagie.text.pdf.ArabicLigaturizer;
 import java.io.IOException;
 import org.core.*;
 import java.util.*;
-import keel.Dataset.Attribute;
-import keel.Dataset.Attributes;
 
 public class Algorithm {
 
@@ -318,17 +315,18 @@ public class Algorithm {
             //Calculate the 2-opt
             int i = 0;
             //System.out.println("Valor de sizeVectorRuele: " + sizeVectorRule);
+            
             while (i < (sizeVectorRule * (sizeVectorRule - 1) / 2)) {
                 int[] ruleVecina = new int[sizeVectorRule];
                 boolean reglaValida = false;
-                while (!reglaValida) {
+                while (!reglaValida && i < (sizeVectorRule * (sizeVectorRule - 1) / 2)) {
                     ruleVecina = _2opt(binaryRule);
                     reglaValida = comprobarSiReglaValida(ruleVecina);
                     if(!reglaValida){
                         i++;
                     }
                 }
-
+                
                 resultado = mestimate(ruleVecina, example);
                 
                 if (bestError < resultado) {
@@ -376,6 +374,7 @@ public class Algorithm {
         int[] bestRuleObtained;
         Random rnd = new Random(234);
         int[] valores = new int[train.getOutputAsInteger().length];
+        
 
         if (somethingWrong) { //We do not execute the program
             System.err.println("An error was found, either the data-set have numerical values or missing values.");
@@ -449,10 +448,12 @@ public class Algorithm {
     private void imprimirReglaGenerada(int[] rule, int clase) {
         System.out.println("");
         for (int i = 0; i < rule.length; i++) {
-            if(i!= rule.length-1)
+            if(i!= rule.length-1) {
                 System.out.print(rule[i] + ", ");
-            else
+            }
+            else {
                 System.out.print(rule[i]);
+            }
         }
         System.out.print(" - Clase: " + clase);
     }

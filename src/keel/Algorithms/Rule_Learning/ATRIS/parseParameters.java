@@ -111,6 +111,7 @@ public class parseParameters {
         StringTokenizer data = new StringTokenizer(new_line, " = \" ");
         data.nextToken(); //inputFile
         trainingFile = data.nextToken();
+        //System.out.println("FICHERO: " + trainingFile);
         //validationFile = data.nextToken();
         testFile = data.nextToken();
         while(data.hasMoreTokens()){

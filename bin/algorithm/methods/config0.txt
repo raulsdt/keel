@@ -1,5 +1,5 @@
 algorithm = ATRIS
-inputData = "./Lenses/lenses-10-1tra.dat" "./Lenses/lenses-10-1tst.dat" 
-outputData = "./Lenses/lenses-10-1tra_outtra.dat" "./Lenses/lenses-10-1tra_outtst.dat" "./salida.dat"
+inputData = "./zoo/zoo-10-1tra.dat" "./zoo/zoo-10-1tst.dat" 
+outputData = "./lym/lenses-10-1tra_outtra.dat" "./lym/lenses-10-1tra_outtst.dat" "./salida.dat"
 
 k = 10
