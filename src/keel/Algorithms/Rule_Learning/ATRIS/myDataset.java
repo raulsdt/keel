@@ -234,9 +234,7 @@ public class myDataset {
             // Load in memory a dataset that contains a classification problem
             IS.readSet(datasetFile, train);
             nData = IS.getNumInstances();
-            System.out.println("nData" + nData);
             nInputs = Attributes.getInputNumAttributes();
-            System.out.println("nInputs" + nInputs);
             nVars = nInputs + Attributes.getOutputNumAttributes();
 
             // outputIntegerheck that there is only one output variable
@@ -273,7 +271,6 @@ public class myDataset {
                 Instance inst = IS.getInstance(i);
                 for (int j = 0; j < nInputs; j++) {
                     X[i][j] = IS.getInputNumericValue(i, j); //inst.getInputRealValues(j);
-                    System.out.println("Valor de X: " + X[i][j]);
                     missing[i][j] = inst.getInputMissingValues(j);
                     if (X[i][j] > emax[j] || i == 0) {
                         emax[j] = X[i][j];
@@ -288,7 +285,6 @@ public class myDataset {
                     output[i] = "";
                 } else {
                     outputInteger[i] = (int) IS.getOutputNumericValue(i, 0);
-                    System.out.println("Salida de i" + outputInteger[i]);
                     output[i] = IS.getOutputNominalValue(i, 0);
                 }
                 if (outputInteger[i] > nClasses) {

@@ -46,16 +46,12 @@ public class Algorithm {
 
     /**
      * Methode to know the number of activated rules for active class
+     *
      * @return number of activated rules
      */
     private int rulesClassesActivated() {
-        int suma = 0;
-        for (int i = 0; i < arrayofClass.get(nowfilm).size(); i++) {
-            if (rulesActivated.get(arrayofClass.get(nowfilm).get(i)) == 1) {
-                suma++;
-            }
-        }
-        return suma;
+
+        return rulesActivated.size();
 
     }
 
@@ -98,85 +94,61 @@ public class Algorithm {
 
     /**
      * Number of rules that cover to a rule positivement
+     *
      * @param rule
      * @param numberRule
-     * @return 
+     * @return
      */
-    private int PositivcontainCoverVars(int[] rule, int numberRule) {
+    private int[] containCoverRules(int[] rule, int numberRule) {
         int[] vectorNumerico = new int[train.getnInputs()];
         boolean entra = true;
-        int suma_Positivos = 0;
-
+        int offset = 0;
+        
+        int[] totalCoversRules = new int[2];
+        totalCoversRules[0] = 0; //Covers rules positivement
+        totalCoversRules[1] = 0; //Covers rules negativement
+        
         for (int i = 0; i < arrayReglas.length; i++) {
             entra = true;
-            if (arrayReglas[i] == 1) {
+            offset = 0;
+            if (arrayReglas[i] == 1) { //Rule is Activated?
                 for (int j = 0; j < train.getnInputs(); j++) {
-                    if (rule[(int) train.getX()[i][j]] != 1) {
+                    if (rule[offset + (int) train.getX()[i][j]] != 1) {
                         entra = false;
+                        offset +=valoresAtributo.get(j);
+                        break;//Comprobar
                     }
-                    break;
+                    offset +=valoresAtributo.get(j);
                 }
-                if (entra) {
+                if (entra) { 
                     if (train.getOutputAsInteger(i) == train.getOutputAsInteger(numberRule)) {
-                        suma_Positivos++;
+                        totalCoversRules[0]++;
+                    }else{
+                        totalCoversRules[1]++;
                     }
                 }
             }
         }
-        return suma_Positivos;
+        return totalCoversRules;
     }
 
-    /**
-     * Number of rule that cover to rule negativement
-     * @param rule
-     * @param numberRule
-     * @return 
-     */
-    private int NegativcontainCoverVars(int[] rule, int numberRule) {
-        int[] vectorNumerico = new int[train.getnInputs()];
-        boolean entra = true;
-        int suma_Negativos = 0;
-
-        for (int i = 0; i < arrayReglas.length; i++) {
-            entra = true;
-            if (arrayReglas[i] == 1) {
-                for (int j = 0; j < train.getnInputs(); j++) {
-                    if (rule[(int) train.getX()[i][j]] != 1) {
-                        entra = false;
-                    }
-                    break;
-                }
-                if (entra) {
-                    if (train.getOutputAsInteger(i) != train.getOutputAsInteger(numberRule)) {
-                        suma_Negativos++;
-                    }
-                }
-            }
-        }
-        return suma_Negativos;
-    }
+    
 
     /**
      * Num or rules that are cover for it
+     *
      * @param rule
      * @return
      */
-    private int containVars() {
-        /*
-         * int[] vectorNumerico = new int[train.getnInputs()]; boolean entra =
-         * true; int suma_Positivos = 0;
-         *
-         * for (int i = 0; i < arrayReglas.length; i++) { entra = true; if
-         * (arrayReglas[i] == 1) { for (int j = 0; j < train.getnInputs(); j++)
-         * { if (rule[(int) train.getX()[i][j]] != 1) { entra = false; } break;
-         * } if (entra) { suma_Positivos++; } } }
-         */
-        return numRuleActivate();
+    private int positiveRules() {
+
+        return arrayofClass.get(nowfilm).size();
     }
 
     /**
      * Whole of rule active
-     * @return 
+     *
+     * @return
      */
     private int numRuleActivate() {
         int suma = 0;
@@ -190,18 +162,19 @@ public class Algorithm {
 
     /**
      * Calculate the mestimate
+     *
      * @param rule
      * @param numberRule
-     * @return 
+     * @return
      */
-    private double mestimate(int[] rule, int numberRule) {
-        int P = containVars();
-        int N = numRuleActivate() - P;
+    private double mestimate(int[] rule, int numberRule) throws IOException {
+        int P = positiveRules();
+        int N = train.getX().length - P;
         int m = 2;
-        int p = PositivcontainCoverVars(rule, numberRule);
-        int n = NegativcontainCoverVars(rule, numberRule);
-
-        return (p + m * (P / (P + N))) / (p + n + m);
+        int[] coversRules = containCoverRules(rule, numberRule);
+        int p = coversRules[0];
+        int n = coversRules[1];
+        return (double) ((double) p + (double) m * (double) ((double) P / (double) (P + N))) / (double) (p + n + m);
 
 
         // TODO: ATRIS - Revisar el estimador.
@@ -215,7 +188,7 @@ public class Algorithm {
      * @return
      */
     private ArrayList<Integer> rulesActivate(LinkedList<Integer> rules, int[] arrayReglas) {
-        ArrayList<Integer> lista = new ArrayList<Integer>();        
+        ArrayList<Integer> lista = new ArrayList<Integer>();
         for (int i = 0; i < rules.size(); i++) {
             if (arrayReglas[rules.get(i)] == 1) {
                 lista.add(rules.get(i));
@@ -226,8 +199,9 @@ public class Algorithm {
 
     /**
      * Calculate combination of knn
+     *
      * @param cant
-     * @return 
+     * @return
      */
     private List<String> obtencionKnn(int cant) {
 
@@ -249,6 +223,7 @@ public class Algorithm {
 
     /**
      * Calcule combination 2opt
+     *
      * @return
      */
     private int[] _2opt(int[] vectorSalida) {
@@ -260,12 +235,6 @@ public class Algorithm {
 
         vecinos = v.split(",");
 
-        //Intercambio de valores
-//        int valorInter = vectorSalida[Integer.valueOf(vecinos[0])];
-//        vectorSalida[Integer.valueOf(vecinos[0])] = vectorSalida[Integer.valueOf(vecinos[1])];
-//        vectorSalida[Integer.valueOf(vecinos[1])] = valorInter;
-
-        //System.out.println("VAlor de vexinos: " + vecinos[0] + " - " + vecinos[1]);
         if (vectorSalida[Integer.valueOf(vecinos[0])] == 1) {
             vectorSalida[Integer.valueOf(vecinos[0])] = 0;
         } else {
@@ -282,19 +251,39 @@ public class Algorithm {
         return vectorSalida;
     }
 
+    private boolean comprobarSiReglaValida(int[] rule) {
+        boolean correcto = false;
+        int offset = 0; // 
+        for (int i = 0; i < train.getnInputs(); i++) {
+            correcto = false;
+            for (int j = 0; j < valoresAtributo.get(i); j++) {
+                if (rule[offset + j] == 1) {
+                    correcto = true;
+                }
+            }
+            offset += valoresAtributo.get(i);
+            if (!correcto) {
+                return false;
+            }
+
+        }
+        return true;
+    }
+
     /**
      * Obtain the best rule about a determinate rule (example)
+     *
      * @param example
      * @return
-     * @throws IOException 
+     * @throws IOException
      */
     public int[] obtainBestRule(int example) throws IOException {
 
         double[][] arrayValores = train.getX();
-        double bestError = 0, resultado = 9999;
+        double bestError = 0, resultado = 0;
         boolean nuevaRegla = true, acabado = false;
 
-        
+
 
         int[] binaryRule = new int[sizeVectorRule];
         if (nuevaRegla) {
@@ -310,12 +299,16 @@ public class Algorithm {
 
 
             //Conversion the Rule - Colocamos valores de uno donde sea necesario.
-            int suma = 0;
-            binaryRule[(int) arrayValores[example][0]] = 1;
-            for (int j = 1; j < train.getnInputs(); j++) {
-                suma += valoresAtributo.get(j - 1);
-                binaryRule[suma + (int) arrayValores[example][j]] = 1;
+            int offset = 0;
+            //binaryRule[(int) arrayValores[example][0]] = 1;
+            for (int j = 0; j < train.getnInputs(); j++) {       
+                binaryRule[offset + (int) arrayValores[example][j]] = 1;   
+                offset += valoresAtributo.get(j);
             }
+//            System.out.println("La regla inicial es : " + example);
+//            for(int i=0; i< binaryRule.length;i++){
+//                System.out.print(binaryRule[i]);
+//            }
         }
 
         while (acabado != true) {
@@ -326,20 +319,27 @@ public class Algorithm {
             int i = 0;
             //System.out.println("Valor de sizeVectorRuele: " + sizeVectorRule);
             while (i < (sizeVectorRule * (sizeVectorRule - 1) / 2)) {
-                //System.out.println("Valor de i: " + i);
                 int[] ruleVecina = new int[sizeVectorRule];
-                ruleVecina = _2opt(binaryRule);
+                boolean reglaValida = false;
+                while (!reglaValida) {
+                    ruleVecina = _2opt(binaryRule);
+                    reglaValida = comprobarSiReglaValida(ruleVecina);
+                    if(!reglaValida){
+                        i++;
+                    }
+                }
 
                 resultado = mestimate(ruleVecina, example);
-                if (bestError > resultado) {
+                
+                if (bestError < resultado) {
                     bestError = resultado;
                     vecinoMejor = vecinos;
-                    i = 0;
+                    //i = 0;
                     binaryRule = ruleVecina;
                     nuevaRegla = false;
                     break;
                 }
-                
+
                 if (i == (sizeVectorRule * (sizeVectorRule - 1) / 2) - 1) {
                     acabado = true;
                     break;
@@ -385,19 +385,19 @@ public class Algorithm {
             //Comprobaciones a realizar 
             if (train.hasNumericalAttributes()) {
                 System.out.println("Se trata de atributos numericos");
+                //TODO: Tendriamos que devolver fallo?
             } else if (train.hasRealAttributes()) {
                 System.out.println("Se trata de atributos reales");
+                //TODO: Tendriamos que devolver fallo?
             } else {
                 System.out.println("Se trata de otros tipos de atributo");
             }
 
 
             //Determination vector of different Rules
-            System.out.println("La clase seleccionada es: " + selectClassInitial());
             for (int i = 0; i < train.getnClasses(); i++) {
                 arrayClases[i] = 1;
             }
-
 
             for (int i = 0; i < train.getnData(); i++) {
                 arrayReglas[i] = 1;
@@ -412,28 +412,17 @@ public class Algorithm {
                 arrayofClass.get(train.getOutputAsInteger(i)).add(i);
             }
 
-            
-            
-            
             //Preparate for transladation to Binary number - Definition tam of binary vector
-        for (int i = 0; i < train.getnInputs(); i++) {
-            for (int j = 0; j < train.getOutputAsInteger().length; j++) {
-                valores[j] = ((int) train.getX()[j][i]);
+            for(int i=0;i < train.devuelveRangos().length-1;i++){
+                sizeVectorRule += (int)train.devuelveRangos()[i][1]+1;
+                valoresAtributo.add((int)train.devuelveRangos()[i][1]+1);
             }
-            Arrays.sort(valores);
 
-            //System.out.println("Valores maximos: " + valores[(valores.length - 1)]);
-            sizeVectorRule += valores[(valores.length - 1)] + 1;
-            valoresAtributo.add(valores[(valores.length - 1)] + 1);
-        }
-        
-        
-            
             int reglasActivasParaClase = 0;
 
             for (int nClases = 0; nClases < train.getnClasses() - 1; nClases++) {
                 //Obtain the number of aleatory rule 
-                nowfilm = selectClassInitial();
+                nowfilm = selectClass();
                 reglasActivasParaClase = arrayofClass.get(nowfilm).size();
                 while (reglasActivasParaClase != 0) {
                     rulesActivated = rulesActivate(arrayofClass.get(nowfilm), arrayReglas);
@@ -442,7 +431,7 @@ public class Algorithm {
 
                     bestRuleObtained = obtainBestRule(rulesActivated.get(rnd.nextInt(rulesActivated.size())));
                     reglasActivasParaClase = deleteRuleCovert(nowfilm, bestRuleObtained);
-                    imprimirReglaGenerada(bestRuleObtained, nowfilm);
+                    imprimirReglaGenerada(bestRuleObtained, nowfilm);                 
                     //TODO: ATRIS - Eliminar aquellos ejemplos cubiertos por la mejor regla obtenida anteriormente.
                 }
                 arrayClases[nowfilm] = 0;
@@ -453,29 +442,34 @@ public class Algorithm {
 
     /**
      * Prinf of rule
+     *
      * @param rule
-     * @param clase 
+     * @param clase
      */
     private void imprimirReglaGenerada(int[] rule, int clase) {
         System.out.println("");
         for (int i = 0; i < rule.length; i++) {
-            System.out.print(rule[i] + ", ");
+            if(i!= rule.length-1)
+                System.out.print(rule[i] + ", ");
+            else
+                System.out.print(rule[i]);
         }
         System.out.print(" - Clase: " + clase);
     }
 
     /**
      * Delete rules cover for a out rule
+     *
      * @param clase
      * @param rule
-     * @return 
+     * @return
      */
     private int deleteRuleCovert(int clase, int[] rule) {
         double[][] arrayValores = train.getX();
         boolean salir = false;
         int cantidadClase = 0;
-        int sumaClase=0;
-        
+        int sumaClase = 0;
+
         for (int i = 0; i < arrayReglas.length; i++) {
 //            System.out.println("Valor: ");
 //            for(int j=0;j< train.getnInputs();j++){
@@ -486,7 +480,7 @@ public class Algorithm {
                 if (rule[sumaClase + (int) arrayValores[i][k]] != 1) {
                     salir = true;
                 }
-                sumaClase+= valoresAtributo.get(k);
+                sumaClase += valoresAtributo.get(k);
             }
             if (!salir) {
                 arrayReglas[i] = 0; //Desactivamos la regla
@@ -494,16 +488,17 @@ public class Algorithm {
             } else {
                 salir = false;
             }
-            
+
         }
         return rulesActivate(arrayofClass.get(nowfilm), arrayReglas).size();
     }
 
     /**
      * Select the class with less number of examples
-     * @return 
+     *
+     * @return
      */
-    private int selectClassInitial() {
+    private int selectClass() {
 
         int[] array = new int[train.getnClasses()];
         int countLess = 0, numberLess = 9999999;
