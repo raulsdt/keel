@@ -374,6 +374,8 @@ public class Algorithm {
     public void execute() throws IOException {
 
         ArrayList<int[]> conjBestRuleObtained = new ArrayList<int[]>();
+        ArrayList<Integer> classBestRuleObtained = new ArrayList<Integer>();
+        
         int[] bestRuleObtained;
         Random rnd = new Random(234);
         int[] valores = new int[train.getOutputAsInteger().length];
@@ -433,8 +435,11 @@ public class Algorithm {
 
                     bestRuleObtained = obtainBestRule(rulesActivated.get(rnd.nextInt(rulesActivated.size())));
                     reglasActivasParaClase = deleteRuleCovert(nowfilm, bestRuleObtained);
-                    imprimirReglaGenerada(bestRuleObtained, nowfilm);  
+                    imprimirReglaGenerada(bestRuleObtained, nowfilm);
+                    
                     conjBestRuleObtained.add(bestRuleObtained);
+                    classBestRuleObtained.add(nowfilm);
+                    
                     //TODO: ATRIS - Eliminar aquellos ejemplos cubiertos por la mejor regla obtenida anteriormente.
                 }
                 arrayClases[nowfilm] = 0;
@@ -442,10 +447,10 @@ public class Algorithm {
             
             //###################Inducimos la base de reglas####################
             String output = new String("");
-            BaseReglas br = new BaseReglas(conjBestRuleObtained,valoresAtributo, train);
+            BaseReglas br = new BaseReglas(conjBestRuleObtained,classBestRuleObtained, valoresAtributo, train);
             br.ficheroReglas("salidaReglas.txt",output);
             
-            //###################Comprobamos con el fochero de test#############
+            //###################Comprobamos con el fichero de test#############
             LinkedList<String> resultado_test = br.compruebaReglas(test);
             
             doOutput(this.test, this.outputTst, resultado_test);

@@ -4,13 +4,13 @@ Número de reglas: 5
 
 Tamaño medio de las reglas obtenidas: 6.0 
 
- [ (age_of_the_patient,pre_presbyopic) | (age_of_the_patient,presbyopic) ]  &  [  [ (spectacle_prescription,myope) ]  &  [  [ (astigmatic,yes) ]  &  [  [ (tear_production_rate,reduced) | (tear_production_rate,normal) ]  -> (Class,no_lenses) 
+ [ (age_of_the_patient,pre_presbyopic) | (age_of_the_patient,presbyopic) ]  &  [ (spectacle_prescription,myope) ]  &  [ (astigmatic,yes) ]  &  [ (tear_production_rate,reduced) | (tear_production_rate,normal) ]  -> (Class,hard) 
 ------------------------------------
- [ (age_of_the_patient,young) | (age_of_the_patient,pre_presbyopic) | (age_of_the_patient,presbyopic) ]  &  [  [ (spectacle_prescription,hypermetrope) ]  &  [  [ (astigmatic,yes) ]  &  [  [ (tear_production_rate,normal) ]  -> (Class,soft) 
+ [ (age_of_the_patient,young) | (age_of_the_patient,pre_presbyopic) | (age_of_the_patient,presbyopic) ]  &  [ (spectacle_prescription,hypermetrope) ]  &  [ (astigmatic,yes) ]  &  [ (tear_production_rate,normal) ]  -> (Class,hard) 
 ------------------------------------
- [ (age_of_the_patient,young) | (age_of_the_patient,pre_presbyopic) ]  &  [  [ (spectacle_prescription,hypermetrope) ]  &  [  [ (astigmatic,no) ]  &  [  [ (tear_production_rate,reduced) | (tear_production_rate,normal) ]  -> (Class,no_lenses) 
+ [ (age_of_the_patient,young) | (age_of_the_patient,pre_presbyopic) ]  &  [ (spectacle_prescription,hypermetrope) ]  &  [ (astigmatic,no) ]  &  [ (tear_production_rate,reduced) | (tear_production_rate,normal) ]  -> (Class,soft) 
 ------------------------------------
- [ (age_of_the_patient,young) | (age_of_the_patient,pre_presbyopic) ]  &  [  [ (spectacle_prescription,myope) | (spectacle_prescription,hypermetrope) ]  &  [  [ (astigmatic,no) ]  &  [  [ (tear_production_rate,normal) ]  -> (Class,no_lenses) 
+ [ (age_of_the_patient,young) | (age_of_the_patient,pre_presbyopic) ]  &  [ (spectacle_prescription,myope) | (spectacle_prescription,hypermetrope) ]  &  [ (astigmatic,no) ]  &  [ (tear_production_rate,normal) ]  -> (Class,soft) 
 ------------------------------------
- [ (age_of_the_patient,young) | (age_of_the_patient,presbyopic) ]  &  [  [ (spectacle_prescription,hypermetrope) ]  &  [  [ (astigmatic,no) | (astigmatic,yes) ]  &  [  [ (tear_production_rate,normal) ]  -> (Class,soft) 
+ [ (age_of_the_patient,young) | (age_of_the_patient,presbyopic) ]  &  [ (spectacle_prescription,hypermetrope) ]  &  [ (astigmatic,no) | (astigmatic,yes) ]  &  [ (tear_production_rate,normal) ]  -> (Class,soft) 
 ------------------------------------

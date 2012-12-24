@@ -48,7 +48,7 @@ public class BaseReglas {
     private myDataset train;
     private ArrayList<int[]> reglasResult;
 
-    public BaseReglas(ArrayList<int[]> array, ArrayList<Integer> conjuntos, myDataset atrain) {
+    public BaseReglas(ArrayList<int[]> array, ArrayList<Integer> clases, ArrayList<Integer> conjuntos, myDataset atrain) {
 
         double[] fila; //variable para almacenar los valores de una fila completa
         LinkedList<LinkedList<Double>> antecedentes = new LinkedList<LinkedList<Double>>();
@@ -58,7 +58,9 @@ public class BaseReglas {
 
         int r_aux = 0;
         double v_aux;
-
+        
+        Attribute at[] = Attributes.getOutputAttributes();
+        
         for (int j = 0; j < array.size(); j++) { //para cada fila
 
             antecedentes.clear();
@@ -82,7 +84,9 @@ public class BaseReglas {
             }//Fin del while
 
             base_de_reglas.add((LinkedList<LinkedList<Double>>) antecedentes.clone());
-            base_de_reglas_salida.add(train.getOutputAsString(j));
+            System.out.println("INDICE CLASES: " +  clases.get(j));
+            
+            base_de_reglas_salida.add(at[0].getNominalValue(clases.get(j)));
 
         } //Fin del for
 
@@ -120,6 +124,7 @@ public class BaseReglas {
 
     public LinkedList<String> compruebaReglas(myDataset test) {
         LinkedList<String> salida = new LinkedList<String>();
+         Attribute at[] = Attributes.getOutputAttributes();
 
         //Para cada uno de lo ejemplo del test, comprobamos si lo cubre alguna regla
         for (int i = 0; i < test.size(); i++) {
@@ -135,19 +140,31 @@ public class BaseReglas {
                     }
                 }
                 if (pertenece) {
-                    System.out.println("El ejemplo " + i + "lo cubre la regla " + k);
-                    salida.add("Ejemplo cubierto");
+                    System.out.println("El ejemplo " + i + "lo cubre la regla " + k + "con clase: " + base_de_reglas_salida.get(k));
+                    salida.add(base_de_reglas_salida.get(k));
                     break;
                 }
             }
 
             if (!pertenece) {
-                System.out.println("El ejemplo" + i + " pertenece a la clase por defecto");
-                salida.add("Ejemplo en la clase por defecto");
+                System.out.println("El ejemplo" + i + " pertenece a la clase \"" + classByDefault() +"\" ");
+                salida.add(classByDefault());
             }
         }
         
         return salida;
+    }
+    
+    private String classByDefault(){
+        Attribute at[] = Attributes.getOutputAttributes();
+        Vector<String> clases = at[0].getNominalValuesList();
+        
+        for(int i = 0; i < clases.size(); i++){
+            if(!base_de_reglas_salida.contains(clases.get(i))){
+                return clases.get(i);
+            }
+        }
+        return null;
     }
 
     public void mostrarReglas() {
