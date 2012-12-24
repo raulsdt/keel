@@ -6,10 +6,10 @@
 	Copyright (C) 2004-2010
 	
 	F. Herrera (herrera@decsai.ugr.es)
-    L. Sánchez (luciano@uniovi.es)
-    J. Alcalá-Fdez (jalcala@decsai.ugr.es)
-    S. García (sglopez@ujaen.es)
-    A. Fernández (alberto.fernandez@ujaen.es)
+    L. Sï¿½nchez (luciano@uniovi.es)
+    J. Alcalï¿½-Fdez (jalcala@decsai.ugr.es)
+    S. Garcï¿½a (sglopez@ujaen.es)
+    A. Fernï¿½ndez (alberto.fernandez@ujaen.es)
     J. Luengo (julianlm@decsai.ugr.es)
 
 	This program is free software: you can redistribute it and/or modify
@@ -77,9 +77,9 @@ public class Algorithm {
             System.out.println("\nReading the training set: " +
                                parameters.getTrainingInputFile());
             train.readClassificationSet(parameters.getTrainingInputFile(), true);
-            System.out.println("\nReading the validation set: " +
-                               parameters.getValidationInputFile());
-            val.readClassificationSet(parameters.getValidationInputFile(), false);
+//            System.out.println("\nReading the validation set: " +
+//                               parameters.getValidationInputFile());
+//            val.readClassificationSet(parameters.getValidationInputFile(), false);
             System.out.println("\nReading the test set: " +
                                parameters.getTestInputFile());
             test.readClassificationSet(parameters.getTestInputFile(), false);
@@ -271,10 +271,10 @@ public class Algorithm {
             
             //###################Inducimos la base de reglas####################
             BaseReglas br = new BaseReglas(cobertura_global,train);
-            br.ficheroReglas(outputReglas,output);
+            br.ficheroReglas("salidaReglas.txt",output);
             
             //###################Comprobamos con el fochero de test#############
-            LinkedList<String> resultado_val = br.compruebaReglas(val);
+            //LinkedList<String> resultado_val = br.compruebaReglas(val);
 
 
 
@@ -283,7 +283,7 @@ public class Algorithm {
 
           
             //Finally we should fill the training and test output files
-            doOutput(this.val, this.outputTr, resultado_val);
+            //doOutput(this.val, this.outputTr, resultado_val);
             doOutput(this.test, this.outputTst, resultado_test);
 
             System.out.println("Algorithm Finished");

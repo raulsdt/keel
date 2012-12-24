@@ -1,0 +1,28 @@
+COBERTURA GLOBAL
+
+{age_of_the_patient,spectacle_prescription,astigmatic,tear_production_rate} 
+
+BASE DE REGLAS: 
+
+Número de reglas: 9 
+
+Tamaño medio de las reglas obtenidas: 3.7777777777777777 
+
+(tear_production_rate,reduced) -> (Class,no_lenses) 
+------------------------------------
+(age_of_the_patient,young) & (astigmatic,no) & (tear_production_rate,normal) -> (Class,soft) 
+------------------------------------
+(spectacle_prescription,hypermetrope) & (astigmatic,no) & (tear_production_rate,normal) -> (Class,soft) 
+------------------------------------
+(age_of_the_patient,young) & (astigmatic,yes) & (tear_production_rate,normal) -> (Class,hard) 
+------------------------------------
+(age_of_the_patient,pre_presbyopic) & (astigmatic,no) & (tear_production_rate,normal) -> (Class,soft) 
+------------------------------------
+(spectacle_prescription,myope) & (astigmatic,yes) & (tear_production_rate,normal) -> (Class,hard) 
+------------------------------------
+(age_of_the_patient,pre_presbyopic) & (spectacle_prescription,hypermetrope) & (astigmatic,yes) -> (Class,no_lenses) 
+------------------------------------
+(age_of_the_patient,presbyopic) & (spectacle_prescription,myope) & (astigmatic,no) -> (Class,no_lenses) 
+------------------------------------
+(age_of_the_patient,presbyopic) & (spectacle_prescription,hypermetrope) & (astigmatic,yes) -> (Class,no_lenses) 
+------------------------------------

@@ -19,6 +19,8 @@ package keel.Algorithms.Rule_Learning.ATRIS;
 import java.io.IOException;
 import org.core.*;
 import java.util.*;
+import keel.Dataset.Attribute;
+import keel.Dataset.Attributes;
 
 public class Algorithm {
 
@@ -371,6 +373,7 @@ public class Algorithm {
      */
     public void execute() throws IOException {
 
+        ArrayList<int[]> conjBestRuleObtained = new ArrayList<int[]>();
         int[] bestRuleObtained;
         Random rnd = new Random(234);
         int[] valores = new int[train.getOutputAsInteger().length];
@@ -430,11 +433,28 @@ public class Algorithm {
 
                     bestRuleObtained = obtainBestRule(rulesActivated.get(rnd.nextInt(rulesActivated.size())));
                     reglasActivasParaClase = deleteRuleCovert(nowfilm, bestRuleObtained);
-                    imprimirReglaGenerada(bestRuleObtained, nowfilm);                 
+                    imprimirReglaGenerada(bestRuleObtained, nowfilm);  
+                    conjBestRuleObtained.add(bestRuleObtained);
                     //TODO: ATRIS - Eliminar aquellos ejemplos cubiertos por la mejor regla obtenida anteriormente.
                 }
                 arrayClases[nowfilm] = 0;
             }
+            
+            //###################Inducimos la base de reglas####################
+            String output = new String("");
+            BaseReglas br = new BaseReglas(conjBestRuleObtained,valoresAtributo, train);
+            br.ficheroReglas("salidaReglas.txt",output);
+            
+            //###################Comprobamos con el fochero de test#############
+            LinkedList<String> resultado_test = br.compruebaReglas(test);
+            
+            doOutput(this.test, this.outputTst, resultado_test);
+
+            System.out.println("Algorithm Finished");
+//            Attribute a[] = Attributes.getInputAttributes();
+//            for(int i=0; i< a.length;i++){
+//                System.out.println(a[i].getNominalValue(0));
+//            }
 
         }
     }
