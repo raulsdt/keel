@@ -55,7 +55,7 @@ public class BaseReglas {
         LinkedList<Double> arrayInt = new LinkedList<Double>();
         train = atrain;
         reglasResult = array;
-        
+
         int r_aux = 0;
         double v_aux;
 
@@ -118,79 +118,38 @@ public class BaseReglas {
         return valido;
     }
 
-//    public LinkedList<String> compruebaReglas(myDataset test){
-//        
-//        LinkedList<String> resultados = new LinkedList<String>();
-//        double[] fila;
-//        boolean valor_bueno = false; //atributo coincide con un antecedente
-//        boolean encontrado = false; //regla encontrada
-//
-//        for(int j=0;j<test.getnData();j++){ //Para cada fila
-//            encontrado = false;
-//            fila = test.getExample(j); //cogemos la fila           
-//            int i=0;
-//            while(i<base_de_reglas.size() && !encontrado){//bucle de base de reglas
-//                
-//                int k=0;
-//                int aciertos = 0;
-//                while (k<test.getnInputs() && !encontrado){//bucle para las columnas de las tablas
-//                   
-//                    valor_bueno = false;    
-//                    Iterator z = base_de_reglas.get(i).keySet().iterator();//iterador sobre las claves de cada Treemap
-//                    while(z.hasNext() && !encontrado  && !valor_bueno){
-//                        
-//                        int valor_atributo = (Integer) z.next();//obtenemos el atributos del antecedente
-//                        
-//                        if (valor_atributo == k){//Si el atributo es igual al antecednte
-//                            //coincide el valor del antecedente y atributo
-//                            if (fila[k]==base_de_reglas.get(i).get(valor_atributo)){
-//                                aciertos++;
-//                                valor_bueno=true; //para que no compare este mismo valor con otro antecedente
-//                                //Si se ha cumplido una regla, intorudimos el valor de salida en el la lista
-//                                if (aciertos==base_de_reglas.get(i).size()){ 
-//                                    resultados.add(base_de_reglas_salida.get(i));//add
-//                                    encontrado = true;//regla encontrada, parar la busqueda para la fila
-//                                }
-//                            }//La columna está, pero valores distintos
-//                        }//La columna no esta en el antecedente'
-//                    }
-//                    k++;
-//                }//fin while k                   
-//                i++;
-//            }
-//            if (encontrado==false) resultados.add("No clasificado"); //si no encuentra ninguna regla coincidente
-//        }               
-//        return resultados;
-//    }
-//    
-//    
-     public LinkedList<String> compruebaReglas(myDataset test){
-         double[] fila;
-         boolean encontrado = true;
-         LinkedList<String> salida = new LinkedList<String>();
-         int i = 0;
-         while(i < test.getnData()){
-             fila = test.getExample(i);
-             for(int j =0; j < reglasResult.size();j++){
-                 encontrado= true;
-                 for(int l=0; l < fila.length;l++){
-                     if(reglasResult.get(j)[(int)fila[l]] != 1){
-                         encontrado = false;
-                         break;
-                     }
-                 }
-                 if(encontrado){
-                     salida.add(base_de_reglas_salida.get(j));
-                     i++;
-                 }else if(!encontrado  &&j == reglasResult.size() -1){
-                     salida.add("Clase restante");
-                 }
-             }
-             
-         }
-         return salida;
-     }
-    
+    public LinkedList<String> compruebaReglas(myDataset test) {
+        LinkedList<String> salida = new LinkedList<String>();
+
+        //Para cada uno de lo ejemplo del test, comprobamos si lo cubre alguna regla
+        for (int i = 0; i < test.size(); i++) {
+            double[] ejemplo = test.getX()[i];
+            boolean pertenece = false;
+
+            for (int k = 0; k < base_de_reglas.size(); k++) { // Para cada una de la reglas
+                for (int l = 0; l < base_de_reglas.get(k).size(); l++) {
+                    pertenece = base_de_reglas.get(k).get(l).contains(ejemplo[l]);
+
+                    if (!pertenece) { //Sino pertenece nos salimos del buble
+                        break;
+                    }
+                }
+                if (pertenece) {
+                    System.out.println("El ejemplo " + i + "lo cubre la regla " + k);
+                    salida.add("Ejemplo cubierto");
+                    break;
+                }
+            }
+
+            if (!pertenece) {
+                System.out.println("El ejemplo" + i + " pertenece a la clase por defecto");
+                salida.add("Ejemplo en la clase por defecto");
+            }
+        }
+        
+        return salida;
+    }
+
     public void mostrarReglas() {
 
         Attribute a[] = Attributes.getInputAttributes();
@@ -244,7 +203,6 @@ public class BaseReglas {
 
     }
 
-    
     public void ficheroReglas(String ficheroReglas, String output) {
 
         //Mostramos la base de reglas:
@@ -271,12 +229,13 @@ public class BaseReglas {
             output += "Tamaño medio de las reglas obtenidas: " + media_reglas / base_de_reglas.size() + " \n\n";
 
             for (int i = 0; i < base_de_reglas.size(); i++) {
-
-                //Iterator j = base_de_reglas.get(i).keySet().iterator();
                 int j = 0;
+                output += " [ ";
+                
                 while (j < base_de_reglas.get(i).size()) {
                     int l = 0;
                     while (l < base_de_reglas.get(i).get(j).size()) {
+                        System.out.println("L es: " + l + " Tamano es: " + base_de_reglas.get(i).get(j).size());
                         output += "(" + a[j].getName() + ",";//almacena atributo
 
                         Integer valor = (base_de_reglas.get(i).get(j).get(l)).intValue();
@@ -288,12 +247,18 @@ public class BaseReglas {
                             output += prueba + ")";
                         }
                         l++;
-                        if (!(l == base_de_reglas.get(i).get(j).size() && j == base_de_reglas.get(i).size()-1)) {
-                            output += " & ";
+                        if (l < base_de_reglas.get(i).get(j).size()) {
+                            output += " | ";
                         }
+                    }
+                    if (j < base_de_reglas.get(i).size() - 1) {
+                        output += " ] ";
+                        output += " & ";
+                        output += " [ ";
                     }
                     j++;
                 }
+                output += " ] ";
                 output += " -> (" + s[0].getName()
                         + "," + base_de_reglas_salida.get(i) + ") \n";
                 output += "------------------------------------\n";
