@@ -111,7 +111,7 @@ public class parseParameters {
         StringTokenizer data = new StringTokenizer(new_line, " = \" ");
         data.nextToken(); //inputFile
         trainingFile = data.nextToken();
-        //validationFile = data.nextToken();
+        validationFile = data.nextToken();
         testFile = data.nextToken();
         while(data.hasMoreTokens()){
             inputFiles.add(data.nextToken());
@@ -128,7 +128,7 @@ public class parseParameters {
         data.nextToken(); //inputFile
         outputTrFile = data.nextToken();
         outputTstFile = data.nextToken();
-        //outputReglasFile = data.nextToken();
+        outputReglasFile = data.nextToken();
         while(data.hasMoreTokens()){
             outputFiles.add(data.nextToken());
         }

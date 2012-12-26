@@ -225,7 +225,7 @@ public class BaseReglas {
         //Mostramos la base de reglas:
         Attribute a[] = Attributes.getInputAttributes();
         Attribute s[] = Attributes.getOutputAttributes();
-
+        System.out.println(ficheroReglas);
         try {
             FileOutputStream f = new FileOutputStream(ficheroReglas);
             DataOutputStream fis = new DataOutputStream((OutputStream) f);

@@ -77,9 +77,9 @@ public class Algorithm {
             System.out.println("\nReading the training set: " +
                                parameters.getTrainingInputFile());
             train.readClassificationSet(parameters.getTrainingInputFile(), true);
-//            System.out.println("\nReading the validation set: " +
-//                               parameters.getValidationInputFile());
-//            val.readClassificationSet(parameters.getValidationInputFile(), false);
+            System.out.println("\nReading the validation set: " +
+                               parameters.getValidationInputFile());
+            val.readClassificationSet(parameters.getValidationInputFile(), false);
             System.out.println("\nReading the test set: " +
                                parameters.getTestInputFile());
             test.readClassificationSet(parameters.getTestInputFile(), false);
@@ -271,10 +271,10 @@ public class Algorithm {
             
             //###################Inducimos la base de reglas####################
             BaseReglas br = new BaseReglas(cobertura_global,train);
-            br.ficheroReglas("salidaReglas.txt",output);
+            br.ficheroReglas(outputReglas,output);
             
             //###################Comprobamos con el fochero de test#############
-            //LinkedList<String> resultado_val = br.compruebaReglas(val);
+            LinkedList<String> resultado_val = br.compruebaReglas(val);
 
 
 
@@ -283,7 +283,7 @@ public class Algorithm {
 
           
             //Finally we should fill the training and test output files
-            //doOutput(this.val, this.outputTr, resultado_val);
+            doOutput(this.val, this.outputTr, resultado_val);
             doOutput(this.test, this.outputTst, resultado_test);
 
             System.out.println("Algorithm Finished");

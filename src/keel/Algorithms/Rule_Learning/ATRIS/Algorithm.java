@@ -36,7 +36,7 @@ public class Algorithm {
     ArrayList<String> vectorKnn = new ArrayList<String>();
     String[] vecinos, vecinoMejor;
     int nowfilm = 0;
-
+    int contador =0,vecesEntra=0,vecesReglas=0;
     /**
      * Default constructor
      */
@@ -70,6 +70,9 @@ public class Algorithm {
             System.out.println("\nReading the training set: "
                     + parameters.getTrainingInputFile());
             train.readClassificationSet(parameters.getTrainingInputFile(), true);
+            System.out.println("\nReading the validation set: " +
+                               parameters.getValidationInputFile());
+            val.readClassificationSet(parameters.getValidationInputFile(), false);
             System.out.println("\nReading the test set: "
                     + parameters.getTestInputFile());
             test.readClassificationSet(parameters.getTestInputFile(), false);
@@ -334,7 +337,8 @@ public class Algorithm {
                 if (bestError < resultado) {
                     bestError = resultado;
                     vecinoMejor = vecinos;
-                    //i = 0;
+                    i = 0;
+                    vectorKnn = new ArrayList<String>(obtencionKnn(sizeVectorRule));//nuevo
                     binaryRule = ruleVecina;
                     nuevaRegla = false;
                     break;
@@ -375,7 +379,7 @@ public class Algorithm {
 
         ArrayList<int[]> conjBestRuleObtained = new ArrayList<int[]>();
         ArrayList<Integer> classBestRuleObtained = new ArrayList<Integer>();
-        
+        contador =0;
         int[] bestRuleObtained;
         Random rnd = new Random(234);
         int[] valores = new int[train.getOutputAsInteger().length];
@@ -421,24 +425,34 @@ public class Algorithm {
                 sizeVectorRule += (int)train.devuelveRangos()[i][1]+1;
                 valoresAtributo.add((int)train.devuelveRangos()[i][1]+1);
             }
-
+            
+            int numReglasAnterior=0;
+            
             int reglasActivasParaClase = 0;
 
             for (int nClases = 0; nClases < train.getnClasses() - 1; nClases++) {
+                vecesEntra=0;
                 //Obtain the number of aleatory rule 
                 nowfilm = selectClass();
                 reglasActivasParaClase = arrayofClass.get(nowfilm).size();
                 while (reglasActivasParaClase != 0) {
                     rulesActivated = rulesActivate(arrayofClass.get(nowfilm), arrayReglas);
-
+                    System.out.println("Reglas activas: " + rulesActivated.size());
                     //Obtain de best rule for that example
 
                     bestRuleObtained = obtainBestRule(rulesActivated.get(rnd.nextInt(rulesActivated.size())));
+                    
                     reglasActivasParaClase = deleteRuleCovert(nowfilm, bestRuleObtained);
+                    if(numReglasAnterior != reglasActivasParaClase){
+                        conjBestRuleObtained.add(bestRuleObtained);
+                        classBestRuleObtained.add(nowfilm);
+                        vecesEntra++;
+                    }
+                    numReglasAnterior = reglasActivasParaClase;
+                    //System.out.println("Quedan reglas para clase: " + reglasActivasParaClase);
                     imprimirReglaGenerada(bestRuleObtained, nowfilm);
                     
-                    conjBestRuleObtained.add(bestRuleObtained);
-                    classBestRuleObtained.add(nowfilm);
+                    
                     
                     //TODO: ATRIS - Eliminar aquellos ejemplos cubiertos por la mejor regla obtenida anteriormente.
                 }
@@ -448,14 +462,19 @@ public class Algorithm {
             //###################Inducimos la base de reglas####################
             String output = new String("");
             BaseReglas br = new BaseReglas(conjBestRuleObtained,classBestRuleObtained, valoresAtributo, train);
-            br.ficheroReglas("salidaReglas.txt",output);
+            br.ficheroReglas(outputReglas,output);
             
             //###################Comprobamos con el fichero de test#############
             LinkedList<String> resultado_test = br.compruebaReglas(test);
             
+            //###################Comprobamos con el fochero de test#############
+            LinkedList<String> resultado_val = br.compruebaReglas(val);
+            
+            doOutput(this.val, this.outputTr, resultado_val);
             doOutput(this.test, this.outputTst, resultado_test);
 
             System.out.println("Algorithm Finished");
+            System.out.println("Contador es: " + contador + " | " + vecesEntra);
 //            Attribute a[] = Attributes.getInputAttributes();
 //            for(int i=0; i< a.length;i++){
 //                System.out.println(a[i].getNominalValue(0));
@@ -494,23 +513,24 @@ public class Algorithm {
         double[][] arrayValores = train.getX();
         boolean salir = false;
         int cantidadClase = 0;
-        int sumaClase = 0;
+        int offset = 0;
 
         for (int i = 0; i < arrayReglas.length; i++) {
 //            System.out.println("Valor: ");
 //            for(int j=0;j< train.getnInputs();j++){
 //                System.out.print( arrayValores[i][j]);
 //            }
-            sumaClase = 0;
+            offset = 0;
             for (int k = 0; k < train.getnInputs(); k++) {
-                if (rule[sumaClase + (int) arrayValores[i][k]] != 1) {
+                if (rule[offset + (int) arrayValores[i][k]] != 1) {
                     salir = true;
                 }
-                sumaClase += valoresAtributo.get(k);
+                offset += valoresAtributo.get(k);
             }
             if (!salir) {
                 arrayReglas[i] = 0; //Desactivamos la regla
-                //System.out.println("Entra en eliminar: " + i);
+                System.out.println("Entra en eliminar: " + i);
+                contador++;
             } else {
                 salir = false;
             }
