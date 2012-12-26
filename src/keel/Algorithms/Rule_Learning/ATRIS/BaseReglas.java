@@ -9,6 +9,9 @@
  * F. Herrera (herrera@decsai.ugr.es) L. S�nchez (luciano@uniovi.es) J.
  * Alcal�-Fdez (jalcala@decsai.ugr.es) S. Garc�a (sglopez@ujaen.es) A. Fern�ndez
  * (alberto.fernandez@ujaen.es) J. Luengo (julianlm@decsai.ugr.es)
+ * 
+ * Modified: Raúl Salazar de Torres
+ *           José Manuel Serrano Mármol
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -252,7 +255,7 @@ public class BaseReglas {
                 while (j < base_de_reglas.get(i).size()) {
                     int l = 0;
                     while (l < base_de_reglas.get(i).get(j).size()) {
-                        System.out.println("L es: " + l + " Tamano es: " + base_de_reglas.get(i).get(j).size());
+                        //System.out.println("L es: " + l + " Tamano es: " + base_de_reglas.get(i).get(j).size());
                         output += "(" + a[j].getName() + ",";//almacena atributo
 
                         Integer valor = (base_de_reglas.get(i).get(j).get(l)).intValue();

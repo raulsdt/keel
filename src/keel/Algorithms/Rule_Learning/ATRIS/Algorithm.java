@@ -1,52 +1,73 @@
 /**
+ * @class Algorithm.java
  * @author Raúl Salazar de Torres
- * @author José Manuel Serrano Mármol @date 15/12/2012
+ * @author José Manuel Serrano Mármol 
+ * @date 15/12/2012
  * @version 1.0
+ * Asignatura de Ingeniería del Conocimiento - Universidad de Jaén
  */
+
 package keel.Algorithms.Rule_Learning.ATRIS;
 
-/**
- * <p>Title: Algorithm</p>
- *
- * <p>Description: It contains the implementation of the algorithm</p>
- *
- *
- * <p>Company: KEEL </p>
- *
- * @author Alberto Fernandez
- * @version 1.0
- */
 import java.io.IOException;
-import org.core.*;
 import java.util.*;
-import keel.Dataset.Attribute;
-import keel.Dataset.Attributes;
+import org.core.Fichero;
+import org.core.Randomize;
+
 
 public class Algorithm {
-
+    
+    /** train: dataset del conjunto de ejemplos dedicado a entrenamiento
+        val: dataset dedicado a validación y mejora del sistema
+        test: dataset del conjunto de ejemplos dedicado al ejemplo del sistema*/
     myDataset train, val, test;
+    
+    /** outputTr: Cadena con directorio y nombre del fichero de training
+     *  outputTst: Cadena con direcotorio y nombre del fichero de Test
+     *  ouputReglas: Cadena con directorio y nombre del fichero donde se almacenan las reglas
+     */
     String outputTr, outputTst, outputReglas;
+    
+    /** Tamaño del vector con el que se define la regla binaría en el sistema*/
     int sizeVectorRule = 0;
+    
+    /** Array que contiene el tamaño de cada una de las variables del problema */
     ArrayList<Integer> valoresAtributo = new ArrayList<Integer>();
-    int[] arrayReglas; //Reglas disponibles
-    int[] arrayClases; //Clases disponibles
+    
+    /** Reglas disponibles = 1 y no disponibles = 0 en el sistema */
+    int[] arrayReglas; 
+    
+    /**  Clases disponible = 1 y no disponibles = 0 en el sistema*/
+    int[] arrayClases; 
+    
+    /** Reglas existente para cada una de las reglas */
     LinkedList<LinkedList<Integer>> arrayofClass = new LinkedList<LinkedList<Integer>>();
+    
+    /** Reglas activas que existen para una regla dada */
     ArrayList<Integer> rulesActivated = new ArrayList<Integer>();
+    
+    /**  */
     private boolean somethingWrong = false; //to check if everything is correct.
+    
+    /** Array con las posibles combinaciones de vecinos que existen */
     ArrayList<String> vectorKnn = new ArrayList<String>();
+    
+    /** Cadenas necesarias para almacenamiento del mejor vecino  */
     String[] vecinos, vecinoMejor;
+    
+    /** Clase activa actualmente  */
     int nowfilm = 0;
-    int contador =0,vecesEntra=0,vecesReglas=0;
+    
     /**
      * Default constructor
      */
     public Algorithm() {
+        
     }
 
     /**
-     * Methode to know the number of activated rules for active class
-     *
-     * @return number of activated rules
+     * Número de reglas activadas para la clase actual
+     * @return Entero correspondiente al número de reglas activas.
      */
     private int rulesClassesActivated() {
 
@@ -55,11 +76,8 @@ public class Algorithm {
     }
 
     /**
-     * It reads the data from the input files (training, validation and test)
-     * and parse all the parameters from the parameters array.
-     *
-     * @param parameters parseParameters It contains the input files, output
-     * files and parameters
+     * Constructor con parametros.
+     * @param parameters Parametros parseados para la lectura de ficheros
      */
     public Algorithm(parseParameters parameters) {
 
@@ -95,11 +113,11 @@ public class Algorithm {
     }
 
     /**
-     * Number of rules that cover to a rule positivement
-     *
-     * @param rule
-     * @param numberRule
-     * @return
+     * Devuelve el conjunto de reglas cubiertas tanto positivamente (posición 0 del vector de vuelta)
+     * como el conjunto de reglas cubiertas negativamente (posición 1 del vector de retorno)
+     * @param rule Regla la cual se quiere observar si es cubierta o no.
+     * @param numberRule Regla inicial a partir de la cual se obtiene la regla a comprobar.
+     * @return [0] Número de ejemplos cubiertas positivamente. [1] Número de ejemplos cubiertos negativamente
      */
     private int[] containCoverRules(int[] rule, int numberRule) {
         int[] vectorNumerico = new int[train.getnInputs()];
@@ -118,11 +136,11 @@ public class Algorithm {
                     if (rule[offset + (int) train.getX()[i][j]] != 1) {
                         entra = false;
                         offset +=valoresAtributo.get(j);
-                        break;//Comprobar
+                        break;//Out of for
                     }
                     offset +=valoresAtributo.get(j);
                 }
-                if (entra) { 
+                if (entra) { // Is positivement or not?
                     if (train.getOutputAsInteger(i) == train.getOutputAsInteger(numberRule)) {
                         totalCoversRules[0]++;
                     }else{
@@ -137,10 +155,8 @@ public class Algorithm {
     
 
     /**
-     * Num or rules that are cover for it
-     *
-     * @param rule
-     * @return
+     * Número de reglas existentes en la clase que nos encontremos, tantos activas como no.
+     * @return Entero con el número de reglas de la clase
      */
     private int positiveRules() {
 
@@ -148,9 +164,8 @@ public class Algorithm {
     }
 
     /**
-     * Whole of rule active
-     *
-     * @return
+     * Número de reglas de cualquier clase que se encuentran activas.
+     * @return Entero con el número de reglas de cualquier clase que se encuentran activas.
      */
     private int numRuleActivate() {
         int suma = 0;
@@ -163,11 +178,12 @@ public class Algorithm {
     }
 
     /**
-     * Calculate the mestimate
-     *
-     * @param rule
-     * @param numberRule
-     * @return
+     * M-estimate que permite medir la calidad de la regla.
+     * @param rule Regla de la cual se quiere obtener su nivel de calidad
+     * @param numberRule Número de regla de partida a partir del cual se genera la regla derivada que se 
+     * pasa como parametro.
+     * @return Double como medida de calidad de la regla
+     * @throws IOException 
      */
     private double mestimate(int[] rule, int numberRule) throws IOException {
         int P = positiveRules();
@@ -183,11 +199,10 @@ public class Algorithm {
     }
 
     /**
-     * Obtain de rules that there is activated nowdays
-     *
-     * @param rules
-     * @param arrayReglas
-     * @return
+     * Conjunto de reglas activas para una clase dada
+     * @param rules Reglas perteneciente a la clase en la que nos encontramos
+     * @param arrayReglas Conjunto de reglas total (Muestra actividad de las reglas)
+     * @return Array con el conjunto de reglas de conjunto rules que se encuentran activas,en función de arrayReglas. 
      */
     private ArrayList<Integer> rulesActivate(LinkedList<Integer> rules, int[] arrayReglas) {
         ArrayList<Integer> lista = new ArrayList<Integer>();
@@ -200,10 +215,9 @@ public class Algorithm {
     }
 
     /**
-     * Calculate combination of knn
-     *
-     * @param cant
-     * @return
+     * Calculo del knn
+     * @param cant Cantidad del kNN (Se usa 2-opt por defecto)
+     * @return Devuelve una lista de Cadenas con las posibles combinaciones entre vecinos
      */
     private List<String> obtencionKnn(int cant) {
 
@@ -224,9 +238,9 @@ public class Algorithm {
     }
 
     /**
-     * Calcule combination 2opt
-     *
-     * @return
+     * Calculo del 2op (Genera el flit en los bits que sea oportuno)
+     * @param vectorSalida Vector en el cual se realiza 2Opt
+     * @return Array de enteros con el cambio en sus bits ya realizado.
      */
     private int[] _2opt(int[] vectorSalida) {
 
@@ -253,6 +267,11 @@ public class Algorithm {
         return vectorSalida;
     }
 
+    /**
+     * Comprobador para eliminar aquellas reglas que tiene toda una variable llena de 0's
+     * @param rule Regla a comprobar
+     * @return True si la regla es validad y False en cualquier otro caso
+     */
     private boolean comprobarSiReglaValida(int[] rule) {
         boolean correcto = false;
         int offset = 0; // 
@@ -273,16 +292,18 @@ public class Algorithm {
     }
 
     /**
-     * Obtain the best rule about a determinate rule (example)
-     *
-     * @param example
-     * @return
-     * @throws IOException
+     * Proporciona la mejor regla para un ejemplo
+     * @param example Número de ejemplo del cual se quiere obtener la mejor regla
+     * @return Devuelve un array con la mejor regla
+     * @throws IOException 
      */
     public int[] obtainBestRule(int example) throws IOException {
-
-        double[][] arrayValores = train.getX();
+        
+        //Vector con el valor de los diferentes ejemplos
+        double[][] arrayValores = train.getX(); 
+        //Campos doubles para mantener el resultado siempre de la mejor regla obtenida hasta el momento.
         double bestError = 0, resultado = 0;
+        //Flip para comprobar si se trata de una nueva regla
         boolean nuevaRegla = true, acabado = false;
 
 
@@ -334,11 +355,11 @@ public class Algorithm {
                 
                 resultado = mestimate(ruleVecina, example);
                 
-                if (bestError < resultado) {
+                if (bestError < resultado) {// Si entra en su interior es porque el resultado es mejor que el anterior. (Más alto)
                     bestError = resultado;
                     vecinoMejor = vecinos;
                     i = 0;
-                    vectorKnn = new ArrayList<String>(obtencionKnn(sizeVectorRule));//nuevo
+                    vectorKnn = new ArrayList<String>(obtencionKnn(sizeVectorRule));
                     binaryRule = ruleVecina;
                     nuevaRegla = false;
                     break;
@@ -373,13 +394,13 @@ public class Algorithm {
     }
 
     /**
-     * It launches the algorithm
+     * Metodo de ejecución del sistema en completo
+     * @throws IOException 
      */
     public void execute() throws IOException {
 
         ArrayList<int[]> conjBestRuleObtained = new ArrayList<int[]>();
         ArrayList<Integer> classBestRuleObtained = new ArrayList<Integer>();
-        contador =0;
         int[] bestRuleObtained;
         Random rnd = new Random(234);
         int[] valores = new int[train.getOutputAsInteger().length];
@@ -431,7 +452,6 @@ public class Algorithm {
             int reglasActivasParaClase = 0;
 
             for (int nClases = 0; nClases < train.getnClasses() - 1; nClases++) {
-                vecesEntra=0;
                 //Obtain the number of aleatory rule 
                 nowfilm = selectClass();
                 reglasActivasParaClase = arrayofClass.get(nowfilm).size();
@@ -446,7 +466,6 @@ public class Algorithm {
                     if(numReglasAnterior != reglasActivasParaClase){
                         conjBestRuleObtained.add(bestRuleObtained);
                         classBestRuleObtained.add(nowfilm);
-                        vecesEntra++;
                     }
                     numReglasAnterior = reglasActivasParaClase;
                     //System.out.println("Quedan reglas para clase: " + reglasActivasParaClase);
@@ -474,20 +493,13 @@ public class Algorithm {
             doOutput(this.test, this.outputTst, resultado_test);
 
             System.out.println("Algorithm Finished");
-            System.out.println("Contador es: " + contador + " | " + vecesEntra);
-//            Attribute a[] = Attributes.getInputAttributes();
-//            for(int i=0; i< a.length;i++){
-//                System.out.println(a[i].getNominalValue(0));
-//            }
-
         }
     }
 
     /**
-     * Prinf of rule
-     *
-     * @param rule
-     * @param clase
+     * Impresión de reglas
+     * @param rule Array con el conjunto de reglas a imprimir
+     * @param clase Clase en la cual nos encontramos actualmente
      */
     private void imprimirReglaGenerada(int[] rule, int clase) {
         System.out.println("");
@@ -503,11 +515,10 @@ public class Algorithm {
     }
 
     /**
-     * Delete rules cover for a out rule
-     *
-     * @param clase
-     * @param rule
-     * @return
+     * Método destinado a la eliminación de aquellas reglas que se cubren por el sistema.
+     * @param clase Clase en la que nos encontramos actualmente
+     * @param rule Mejor regla generada y a partir de la cual se quieren cubir otras
+     * @return Número de reglas que quedan activas en la clase actual
      */
     private int deleteRuleCovert(int clase, int[] rule) {
         double[][] arrayValores = train.getX();
@@ -529,8 +540,6 @@ public class Algorithm {
             }
             if (!salir) {
                 arrayReglas[i] = 0; //Desactivamos la regla
-                System.out.println("Entra en eliminar: " + i);
-                contador++;
             } else {
                 salir = false;
             }
@@ -539,11 +548,10 @@ public class Algorithm {
         return rulesActivate(arrayofClass.get(nowfilm), arrayReglas).size();
     }
 
-    /**
-     * Select the class with less number of examples
-     *
-     * @return
-     */
+   /**
+    * Selección de clase con menos número de elemento
+    * @return Número de la clase
+    */
     private int selectClass() {
 
         int[] array = new int[train.getnClasses()];
@@ -571,10 +579,10 @@ public class Algorithm {
     }
 
     /**
-     * It generates the output file from a given dataset and stores it in a file
-     *
-     * @param dataset myDataset input dataset
-     * @param filename String the name of the file
+     * Impresión del fichero de salida
+     * @param dataset Conjunto de datos que se quieren imprimir
+     * @param filename Ruta y nombre del fichero a crear.
+     * @param resultado Texto a imprimir en el fichero
      */
     private void doOutput(myDataset dataset, String filename, LinkedList<String> resultado) {
         String output = new String("");
